@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Hub Tracker</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⏱️</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -25,13 +25,10 @@
             --input-bg: #ffffff;
             --ring: #3b82f6;
 
-            /* Project specific colors */
-            --dot-red: #f87171;
-            --dot-green: #4ade80;
-            --dot-yellow: #facc15;
-            --dot-purple: #a78bfa;
-            --dot-blue: #60a5fa;
-            --dot-pink: #f472b6;
+            /* Priority Colors */
+            --priority-high: #ef4444;
+            --priority-medium: #f59e0b;
+            --priority-low: #10b981;
         }
 
         .dark {
@@ -81,6 +78,7 @@
         input#dark-mode-toggle:checked ~ .dot { transform: translateX(100%); background-color: var(--primary); }
 
         .project-card.is-running {
+            border-color: transparent;
             box-shadow: 0 0 0 2px var(--project-color, var(--border)), 0 4px 12px 0 rgba(0,0,0,0.1);
         }
         .dark .project-card.is-running {
@@ -240,11 +238,11 @@
         const setupMockData = async () => {
             await Promise.all([clearData('projects'), clearData('tasks'), clearData('accomplishments')]);
             const mockProjects = [
-                { id: 1, name: 'Design System', priority: 'high', color: 'var(--dot-red)' },
-                { id: 2, name: 'Client Work', priority: 'high', color: 'var(--dot-green)' },
-                { id: 3, name: 'Learning', priority: 'medium', color: 'var(--dot-yellow)' },
-                { id: 4, name: 'Research', priority: 'medium', color: 'var(--dot-purple)' },
-                { id: 5, name: 'Marketing', priority: 'low', color: 'var(--dot-blue)' },
+                { id: 1, name: 'Design System', priority: 'high', color: '#f87171' },
+                { id: 2, name: 'Client Work', priority: 'high', color: '#4ade80' },
+                { id: 3, name: 'Learning', priority: 'medium', color: '#facc15' },
+                { id: 4, name: 'Research', priority: 'medium', color: '#a78bfa' },
+                { id: 5, name: 'Marketing', priority: 'low', color: '#60a5fa' },
             ];
             const now = Date.now();
             const mockTasks = [
@@ -462,6 +460,7 @@
                 project.color = newColor;
                 await updateData('projects', project);
                 openProjectDetailView(projectId); // Refresh detail view
+                renderDashboardProjects(); // Also refresh dashboard
             }
         };
 
@@ -491,9 +490,8 @@
             elements.dashboardProjectsList.innerHTML = sortedProjects.map(p => {
                 const isRunning = activeTimer?.projectId === p.id;
                 const timeToday = getTodaysTimeForProject(p.id);
-                const borderColor = getBorderColorFromPriority(p.priority);
                 
-                const priorityBadge = `<div class="badge badge-priority-${p.priority}">${p.priority}</div>`;
+                const priorityBadge = `<div class="badge badge-priority-${p.priority} w-16 justify-center">${p.priority}</div>`;
                 const startStopButton = `<button data-project-id="${p.id}" class="${isRunning ? 'stop-timer-btn bg-red-500' : 'start-timer-btn bg-gray-600'} text-white w-10 h-10 rounded-lg flex items-center justify-center transition-colors hover:bg-opacity-90 self-stretch"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">${isRunning ? '<path d="M6 6h12v12H6z"/>' : '<path d="M8 5v14l11-7z"/>'}</svg></button>`;
 
                 const viewModeHTML = `
@@ -515,7 +513,7 @@
 
                 const expandedContent = `<div class="expanded-content"><div><div class="pt-4 space-y-3"><input type="text" placeholder="What are you working on?" class="task-description-input w-full p-2 rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--foreground)] text-sm" value="${isRunning ? activeTimer.description : ''}"><textarea placeholder="Notes..." class="task-notes-input w-full p-2 rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--foreground)] text-sm h-20 resize-none">${isRunning ? activeTimer.notes : ''}</textarea><div class="flex items-center justify-between"><div class="text-2xl font-semibold timer-display live-timer-display">${isRunning ? formatTime(Date.now() - activeTimer.startTime) : '00:00:00'}</div></div></div></div></div>`;
 
-                return `<div class="project-card bg-[var(--card)] rounded-xl shadow-sm border border-[var(--border)] p-4 transition-all duration-300 ${isRunning ? 'is-running' : ''}" style="--project-color: ${borderColor}; --project-color-glow: ${p.color}40;" data-project-id="${p.id}">${viewModeHTML}${expandedContent}</div>`;
+                return `<div class="project-card bg-[var(--card)] rounded-xl shadow-sm border border-[var(--border)] p-4 transition-all duration-300 ${isRunning ? 'is-running' : ''}" style="--project-color: ${p.color}; --project-color-glow: ${p.color}40;" data-project-id="${p.id}">${viewModeHTML}${expandedContent}</div>`;
             }).join('');
         };
         
