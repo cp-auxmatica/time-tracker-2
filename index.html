@@ -129,11 +129,17 @@
         <main>
             <div id="page-tracker" class="page active">
                 <div class="container mx-auto p-4 sm:p-6 max-w-2xl pt-0">
-                    <div id="sort-controls" class="flex items-center space-x-2 mb-4">
-                        <span class="text-xs font-medium text-gray-500">Sort by:</span>
-                        <button data-sort="priority" class="sort-btn text-xs font-semibold px-3 py-1 rounded-full active">Priority</button>
-                        <button data-sort="name" class="sort-btn text-xs font-semibold px-3 py-1 rounded-full">Name</button>
-                        <button data-sort="latest" class="sort-btn text-xs font-semibold px-3 py-1 rounded-full">Latest</button>
+                    <div id="sort-controls" class="flex items-center justify-between space-x-2 mb-4">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs font-medium text-gray-500">Sort by:</span>
+                            <button data-sort="priority" class="sort-btn text-xs font-semibold px-3 py-1 rounded-full active">Priority</button>
+                            <button data-sort="name" class="sort-btn text-xs font-semibold px-3 py-1 rounded-full">Name</button>
+                            <button data-sort="latest" class="sort-btn text-xs font-semibold px-3 py-1 rounded-full">Latest</button>
+                        </div>
+                        <div class="text-right">
+                             <span class="text-xs font-medium text-gray-500">Today's Total</span>
+                             <p id="dashboard-total-time" class="font-bold text-gray-800 dark:text-gray-200 timer-display"></p>
+                        </div>
                     </div>
                     <section id="dashboard-section"><div id="dashboard-projects-list" class="space-y-4"></div></section>
                 </div>
@@ -208,6 +214,7 @@
                     <div class="flex-1">
                         <label for="new-project-priority" class="block text-sm font-medium text-[var(--muted-foreground)] mb-1">Priority</label>
                         <select id="new-project-priority" class="w-full p-2 border rounded-md text-sm bg-[var(--input-bg)] text-[var(--foreground)] border-[var(--input-border)]">
+                            <option value="">None</option>
                             <option value="low">Low</option>
                             <option value="medium" selected>Medium</option>
                             <option value="high">High</option>
@@ -324,7 +331,7 @@
         const clearData = (store) => new Promise(r => db.transaction(store, 'readwrite').objectStore(store).clear().onsuccess = () => r());
 
         // --- Data & State Management ---
-        const loadData = async () => { await openDB(); [projects, tasks, accomplishments] = await Promise.all([getAllData('projects'), getAllData('tasks'), getAllData('accomplishments')]); if (projects.length === 0) { await setupMockData(); [projects, tasks] = await Promise.all([getAllData('projects'), getAllData('tasks')]); } renderDashboardProjects(); };
+        const loadData = async () => { await openDB(); [projects, tasks, accomplishments] = await Promise.all([getAllData('projects'), getAllData('tasks'), getAllData('accomplishments')]); if (projects.length === 0) { await setupMockData(); [projects, tasks] = await Promise.all([getAllData('projects'), getAllData('tasks')]); } renderDashboardProjects(); updateDashboardTotalTime(); };
         const checkPersistentTimer = () => { const s = localStorage.getItem('activeTimerState'); if (s) { activeTimer = JSON.parse(s); startTimerInterval(); } };
 
         // --- Dark Mode ---
@@ -421,7 +428,7 @@
         };
 
         // --- Timer Logic ---
-        const startTimerInterval = () => { if(timerInterval) clearInterval(timerInterval); timerInterval = setInterval(() => { if (activeTimer) { const el = document.querySelector(`.project-card.is-running .live-timer-display`); if(el) el.textContent = formatTime(Date.now() - activeTimer.startTime); } }, 1000); };
+        const startTimerInterval = () => { if(timerInterval) clearInterval(timerInterval); timerInterval = setInterval(() => { if (activeTimer) { const el = document.querySelector(`.project-card.is-running .live-timer-display`); if(el) el.textContent = formatTime(Date.now() - activeTimer.startTime); updateDashboardTotalTime(); } }, 1000); };
         const stopTimerInterval = () => { clearInterval(timerInterval); timerInterval = null; };
         const startTimer = async (id) => { if(activeTimer) await stopTimer(); activeTimer={projectId:id,description:'', notes:'', startTime:Date.now()}; localStorage.setItem('activeTimerState', JSON.stringify(activeTimer)); startTimerInterval(); renderDashboardProjects(); };
         const stopTimer = async () => { 
@@ -430,7 +437,7 @@
             if (card) { activeTimer.description = card.querySelector('.task-description-input')?.value || ''; activeTimer.notes = card.querySelector('.task-notes-input')?.value || ''; }
             const t = { ...activeTimer, description: activeTimer.description || 'Untitled Task', endTime: Date.now() }; 
             t.id = await addData('tasks', t); tasks.push(t); 
-            localStorage.removeItem('activeTimerState'); activeTimer = null; stopTimerInterval(); renderDashboardProjects();
+            localStorage.removeItem('activeTimerState'); activeTimer = null; stopTimerInterval(); renderDashboardProjects(); updateDashboardTotalTime();
         };
         
         const saveNewProject = async () => {
@@ -464,12 +471,25 @@
             }
         };
 
+        const updateDashboardTotalTime = () => {
+            const dashboardTotalTimeEl = document.getElementById('dashboard-total-time');
+            if(!dashboardTotalTimeEl) return;
+            const startOfDay = new Date().setHours(0, 0, 0, 0);
+            let totalMs = tasks
+                .filter(t => t.endTime >= startOfDay)
+                .reduce((sum, task) => sum + (task.endTime - task.startTime), 0);
+            if (activeTimer) {
+                totalMs += (Date.now() - activeTimer.startTime);
+            }
+            dashboardTotalTimeEl.textContent = formatDuration(totalMs);
+        };
+
         // --- UI Rendering ---
         const renderDashboardProjects = () => {
             let sortedProjects = [...projects];
 
             if (currentSort === 'priority') {
-                const priorityMap = { high: 3, medium: 2, low: 1 };
+                const priorityMap = { high: 3, medium: 2, low: 1, '': 0 };
                 sortedProjects.sort((a, b) => priorityMap[b.priority] - priorityMap[a.priority] || a.name.localeCompare(b.name));
             } else if (currentSort === 'name') {
                 sortedProjects.sort((a, b) => a.name.localeCompare(b.name));
@@ -491,29 +511,38 @@
                 const isRunning = activeTimer?.projectId === p.id;
                 const timeToday = getTodaysTimeForProject(p.id);
                 
-                const priorityBadge = `<div class="badge badge-priority-${p.priority} w-16 justify-center">${p.priority}</div>`;
+                const priorityBadgeHTML = p.priority ? `<div class="badge badge-priority-${p.priority}">${p.priority}</div>` : '';
                 const startStopButton = `<button data-project-id="${p.id}" class="${isRunning ? 'stop-timer-btn bg-red-500' : 'start-timer-btn bg-gray-600'} text-white w-10 h-10 rounded-lg flex items-center justify-center transition-colors hover:bg-opacity-90 self-stretch"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">${isRunning ? '<path d="M6 6h12v12H6z"/>' : '<path d="M8 5v14l11-7z"/>'}</svg></button>`;
 
+                const timeDisplayHTML = isRunning 
+                    ? `<div class="text-xl font-bold text-green-500 timer-display live-timer-display">${formatTime(Date.now() - activeTimer.startTime)}</div>`
+                    : `<div class="text-xl font-bold text-gray-400 dark:text-gray-500 timer-display">${timeToday}</div>`;
+
+                const todaysTimeUnderTitleHTML = isRunning
+                    ? `<div class="text-sm font-medium text-gray-500 dark:text-gray-400">Today: ${timeToday}</div>`
+                    : '';
+
                 const viewModeHTML = `
-                    <div class="view-mode flex items-center justify-between">
-                        <div class="flex items-center space-x-4 flex-grow min-w-0">
-                            <span class="w-4 h-4 rounded-full flex-shrink-0" style="background-color: ${p.color};"></span>
+                    <div class="view-mode flex items-start justify-between">
+                        <div class="flex items-start space-x-4 flex-grow min-w-0">
+                            <span class="w-4 h-4 rounded-full flex-shrink-0 mt-1.5" style="background-color: ${p.color};"></span>
                             <div class="flex-grow min-w-0">
-                                <div class="flex items-center space-x-2">
-                                    <button class="font-semibold project-name-link truncate text-left hover:underline text-lg" data-project-id="${p.id}">${p.name}</button>
-                                    ${priorityBadge}
+                                <div class="flex items-start space-x-2">
+                                     <button class="font-semibold project-name-link truncate text-left hover:underline text-lg" data-project-id="${p.id}">${p.name}</button>
+                                     ${priorityBadgeHTML}
                                 </div>
-                                <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Today: ${timeToday}</div>
+                               ${todaysTimeUnderTitleHTML}
                             </div>
                         </div>
-                        <div class="flex items-center space-x-2">
+                        <div class="flex items-center space-x-4">
+                            ${timeDisplayHTML}
                             ${startStopButton}
                         </div>
                     </div>`;
 
-                const expandedContent = `<div class="expanded-content"><div><div class="pt-4 space-y-3"><input type="text" placeholder="What are you working on?" class="task-description-input w-full p-2 rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--foreground)] text-sm" value="${isRunning ? activeTimer.description : ''}"><textarea placeholder="Notes..." class="task-notes-input w-full p-2 rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--foreground)] text-sm h-20 resize-none">${isRunning ? activeTimer.notes : ''}</textarea><div class="flex items-center justify-between"><div class="text-2xl font-semibold timer-display live-timer-display">${isRunning ? formatTime(Date.now() - activeTimer.startTime) : '00:00:00'}</div></div></div></div></div>`;
+                const expandedContent = `<div class="expanded-content"><div><div class="pt-4 space-y-3"><input type="text" placeholder="What are you working on?" class="task-description-input w-full p-2 rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--foreground)] text-sm" value="${isRunning ? activeTimer.description : ''}"><textarea placeholder="Notes..." class="task-notes-input w-full p-2 rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--foreground)] text-sm h-20 resize-none">${isRunning ? activeTimer.notes : ''}</textarea></div></div></div>`;
 
-                return `<div class="project-card bg-[var(--card)] rounded-xl shadow-sm border border-[var(--border)] p-4 transition-all duration-300 ${isRunning ? 'is-running' : ''}" style="--project-color: ${p.color}; --project-color-glow: ${p.color}40;" data-project-id="${p.id}">${viewModeHTML}${expandedContent}</div>`;
+                return `<div class="project-card bg-[var(--card)] rounded-xl shadow-sm border border-[var(--border)] p-4 transition-all duration-300 relative ${isRunning ? 'is-running' : ''}" style="--project-color: ${p.color}; --project-color-glow: ${p.color}40;" data-project-id="${p.id}">${viewModeHTML}${expandedContent}</div>`;
             }).join('');
         };
         
@@ -603,14 +632,9 @@
             const detailHTML = `
                 <div id="project-detail-view-mode">
                     <header class="flex items-start justify-between mb-6">
-                         <div class="flex items-center">
-                            <button id="back-to-main-btn" class="p-2 mr-2 -ml-2 text-[var(--muted-foreground)] hover:text-[var(--foreground)] rounded-full hover:bg-[var(--muted)]">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
-                            </button>
-                            <div>
-                                <h1 class="text-2xl font-bold" style="color: ${getBorderColorFromPriority(project.priority)};">${project.name}</h1>
-                                <p class="text-sm text-[var(--muted-foreground)]">Project Details & History</p>
-                            </div>
+                        <div>
+                            <h1 class="text-2xl font-bold" style="color: ${getBorderColorFromPriority(project.priority)};">${project.name}</h1>
+                            <p class="text-sm text-[var(--muted-foreground)]">Project Details & History</p>
                         </div>
                         <button id="edit-project-btn" class="text-sm font-semibold py-2 px-4 rounded-lg bg-[var(--muted)] hover:bg-[var(--muted)]/80">Edit</button>
                     </header>
@@ -619,6 +643,7 @@
                     <input type="text" id="edit-project-name" class="w-full p-2 text-xl font-bold border rounded-md bg-[var(--input-bg)] text-[var(--foreground)] border-[var(--input-border)]" value="${project.name}">
                     <div class="flex items-center gap-4">
                         <select id="edit-project-priority" class="w-full p-2 border rounded-md text-sm bg-[var(--input-bg)] text-[var(--foreground)] border-[var(--input-border)]">
+                            <option value="" ${!project.priority ? 'selected' : ''}>None</option>
                             <option value="low" ${project.priority === 'low' ? 'selected' : ''}>Low</option>
                             <option value="medium" ${project.priority === 'medium' ? 'selected' : ''}>Medium</option>
                             <option value="high" ${project.priority === 'high' ? 'selected' : ''}>High</option>
@@ -746,7 +771,6 @@
         });
 
         elements.detailViewContent.addEventListener('click', async e => {
-            if (e.target.closest('#back-to-main-btn')) navigateTo('page-tracker');
             if (e.target.closest('#edit-project-btn')) {
                 document.getElementById('project-detail-view-mode').classList.add('hidden');
                 document.getElementById('project-detail-edit-mode').classList.remove('hidden');
@@ -837,3 +861,4 @@
     </script>
 </body>
 </html>
+
