@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hub Tracker 2.0</title>
+    <title>tikr</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#030213">
@@ -12,26 +12,27 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
     <style>
         :root {
-            --background: #ffffff; --background-main: #f8f9fa; --foreground: #111827; --card: #ffffff;
+            --background: #ffffff; --background-main: #f1f3f5; --foreground: #111827; --card: #ffffff;
             --primary: #030213; --primary-foreground: #ffffff; --muted: #e5e7eb; --muted-foreground: #6b7280;
-            --border: #e5e7eb; --input-border: #d1d5db; --input-bg: #ffffff;
+            --border: #e5e7eb; --input-border: #d1d5db; --input-bg: #ffffff; --logo-color: #004d40;
         }
         .dark {
-            --background: #09090b; --background-main: #111113; --foreground: #fafafa; --card: #18181b;
+            --background: #09090b; --background-main: #161618; --foreground: #fafafa; --card: #18181b;
             --primary: #fafafa; --primary-foreground: #09090b; --muted: #27272a; --muted-foreground: #a1a1aa;
-            --border: #27272a; --input-border: #3f3f46; --input-bg: #18181b;
+            --border: #27272a; --input-border: #3f3f46; --input-bg: #18181b; --logo-color: #4db6ac;
         }
         body { font-family: 'Inter', sans-serif; background-color: var(--background); color: var(--foreground); }
-        main { background-color: var(--background-main); }
+        main { background-color: var(--background-main); min-height: calc(100vh - 150px); }
+        .logo-font { font-family: 'Pacifico', cursive; color: var(--logo-color); }
         .timer-display { font-variant-numeric: tabular-nums; }
         .expanded-content { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.4s ease-in-out; } .expanded-content > div { overflow: hidden; } .project-card.is-running .expanded-content { grid-template-rows: 1fr; }
         .page { display: none; } .page.active { display: block; }
         #top-nav button.active svg { color: var(--primary); }
-        .sort-btn.active { background-color: var(--muted); }
-        input[type="date"], input[type="time"] { color-scheme: dark; } .dark input[type="date"], .dark input[type="time"] { color-scheme: dark; }
+        .sort-btn.active { background-color: var(--muted); color: var(--foreground); }
+        .dark input[type="date"], .dark input[type="time"] { color-scheme: dark; }
         input.toggle-checkbox:checked ~ .dot { transform: translateX(100%); background-color: var(--primary); }
         .project-card.is-running { border-color: transparent; box-shadow: 0 0 0 2px var(--project-color, var(--border)), 0 4px 12px 0 rgba(0,0,0,0.1); } .dark .project-card.is-running { box-shadow: 0 0 0 2px var(--project-color, var(--border)), 0 0 20px 0 var(--project-color-glow, rgba(255,255,255,0.1)); }
         .modal-backdrop { position: fixed; inset: 0; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 40; } .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 50; }
@@ -50,7 +51,7 @@
                         <div class="bg-black text-white w-8 h-8 flex items-center justify-center rounded-full">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                         </div>
-                        <div><h1 class="text-xl font-bold text-[var(--foreground)]">hub tracker</h1></div>
+                        <div><h1 class="text-2xl logo-font">tikr</h1></div>
                     </div>
                     <button id="add-project-btn" class="bg-[var(--primary)] text-[var(--primary-foreground)] w-8 h-8 flex items-center justify-center rounded-full shadow-lg hover:bg-opacity-90 transition-transform transform hover:scale-105"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg></button>
                 </div>
@@ -65,7 +66,7 @@
                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
                     </button>
                     <button data-page="page-settings" class="nav-btn flex-1 py-3 flex items-center justify-center text-gray-500">
-                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M12.22 2h-4.44a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8.88a2 2 0 0 0-.59-1.41l-4.44-4.44a2 2 0 0 0-1.41-.59zM16 18H8M16 14H8M10 10H8"></path></svg>
+                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                     </button>
                  </nav>
             </div>
@@ -73,15 +74,15 @@
 
         <main>
             <div id="page-tracker" class="page active">
-                <div class="container mx-auto p-4 sm:p-6 max-w-2xl pt-4">
+                <div class="container mx-auto p-4 sm:p-6 max-w-2xl">
                     <div id="sort-controls" class="flex items-center justify-between space-x-2 mb-4">
                         <div class="flex items-center space-x-2">
-                            <span class="text-xs font-medium text-gray-500">Sort by:</span>
                             <button data-sort="latest" class="sort-btn text-xs font-semibold px-3 py-1 rounded-full active">Latest</button>
                             <button data-sort="name" class="sort-btn text-xs font-semibold px-3 py-1 rounded-full">Name</button>
+                            <button data-sort="time" data-dir="desc" class="sort-btn text-xs font-semibold px-3 py-1 rounded-full inline-flex items-center gap-1">Time <span class="sort-arrow"></span></button>
                         </div>
                         <div class="text-sm">
-                             <span class="font-medium text-[var(--muted-foreground)]">Today's Total:</span>
+                             <span class="font-medium text-[var(--muted-foreground)]">Today:</span>
                              <span id="dashboard-total-time" class="font-bold text-[var(--foreground)] timer-display"></span>
                         </div>
                     </div>
@@ -89,10 +90,10 @@
                 </div>
             </div>
 
-            <div id="page-reports" class="page"><div id="reports-content" class="container mx-auto p-4 sm:p-6 max-w-2xl pt-4"></div></div>
-            <div id="page-accomplishments" class="page"><div id="accomplishments-content" class="container mx-auto p-4 sm:p-6 max-w-2xl pt-4"></div></div>
-            <div id="page-settings" class="page"><div id="settings-content" class="container mx-auto p-4 sm:p-6 max-w-2xl pt-4"></div></div>
-            <div id="page-detail" class="page"><div id="detail-view-content" class="container mx-auto p-4 sm:p-6 max-w-2xl pt-4"></div></div>
+            <div id="page-reports" class="page"><div id="reports-content" class="container mx-auto p-4 sm:p-6 max-w-2xl"></div></div>
+            <div id="page-accomplishments" class="page"><div id="accomplishments-content" class="container mx-auto p-4 sm:p-6 max-w-2xl"></div></div>
+            <div id="page-settings" class="page"><div id="settings-content" class="container mx-auto p-4 sm:p-6 max-w-2xl"></div></div>
+            <div id="page-detail" class="page"><div id="detail-view-content" class="container mx-auto p-4 sm:p-6 max-w-2xl"></div></div>
         </main>
 
         <div id="modal-backdrop" class="modal-backdrop hidden"></div>
@@ -192,6 +193,14 @@
                     <label for="dark-mode-toggle" class="flex items-center cursor-pointer"><div class="relative"><input type="checkbox" id="dark-mode-toggle" class="sr-only toggle-checkbox"><div class="block bg-gray-300 dark:bg-gray-600 w-12 h-6 rounded-full"></div><div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition"></div></div></label>
                 </div>
             </div>
+             <div class="bg-[var(--card)] p-4 rounded-lg border border-[var(--border)]">
+                <h2 class="text-lg font-semibold mb-3">Time & Region</h2>
+                <div class="flex items-center justify-between">
+                    <span class="font-medium">Detected Time Zone</span>
+                    <span id="detected-time-zone" class="font-semibold text-sm bg-[var(--muted)] px-2 py-1 rounded-md"></span>
+                </div>
+                 <p class="text-xs text-[var(--muted-foreground)] mt-2">All times are calculated based on your device's local time settings.</p>
+            </div>
             <div class="bg-[var(--card)] p-4 rounded-lg border border-[var(--border)] space-y-3">
                 <h2 class="text-lg font-semibold">Data Management</h2>
                 <div class="flex items-center justify-between">
@@ -217,8 +226,8 @@
                 <button id="export-csv-btn" class="w-full bg-[var(--primary)] text-[var(--primary-foreground)] font-semibold py-2 rounded-md">Export CSV</button>
             </div>
             <div class="bg-[var(--card)] p-4 rounded-lg border border-[var(--border)] space-y-3">
-                <h2 class="text-lg font-semibold">User Guide</h2>
-                <p class="text-sm text-[var(--muted-foreground)]">Learn how to use all the features of Hub Tracker.</p>
+                <h2 class="text-lg font-semibold">About</h2>
+                 <p class="text-sm text-[var(--muted-foreground)]">This is a PWA-ready application. To make it installable, create the `manifest.json` and `sw.js` files as instructed in the source code comments.</p>
                 <button id="show-guide-btn" class="w-full text-center py-2 px-4 rounded-lg font-semibold border border-[var(--input-border)] hover:bg-[var(--muted)]">Show User Guide</button>
             </div>
         </div>
@@ -230,15 +239,24 @@
     document.addEventListener('DOMContentLoaded', () => {
         let projects = [], tasks = [], accomplishments = [], activeTimer = null, timerInterval = null;
         let currentDetailProjectId = null, currentSort = 'latest';
-        let dom = {}; // DOM Element Cache
+        let dom = {};
 
         const formatTime=(ms)=>new Date(ms).toISOString().slice(11,19);
         const formatDuration=(ms)=>{if(ms<0)ms=0;const tM=Math.floor(ms/60000);if(tM<1)return"0m";const h=Math.floor(tM/60);const m=tM%60;return`${h>0?`${h}h `:''}${m}m`;};
         const getTotalTimeForProject=(id)=>{let t=tasks.filter(t=>t.projectId===id).reduce((s,t)=>s+(t.endTime-t.startTime),0);if(activeTimer&&activeTimer.projectId===id)t+=Date.now()-activeTimer.startTime;return t;};
+        const getTodaysTimeForProjectMs = (projectId) => {
+            const startOfDay = new Date().setHours(0, 0, 0, 0);
+            let totalMs = tasks.filter(t => t.projectId === projectId && t.endTime >= startOfDay).reduce((sum, task) => sum + (task.endTime - task.startTime), 0);
+            if (activeTimer && activeTimer.projectId === projectId) {
+                const effectiveStartTime = Math.max(activeTimer.startTime, startOfDay);
+                totalMs += (Date.now() - effectiveStartTime);
+            }
+            return totalMs;
+        };
         const downloadFile=(data,name,type)=>{const b=new Blob([data],{type});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(u);};
 
-        let db;const DB_VERSION=18;
-        const openDB=()=>new Promise(r=>{const req=indexedDB.open('timeTrackerDB',DB_VERSION);req.onupgradeneeded=e=>{db=e.target.result;if(!db.objectStoreNames.contains('projects'))db.createObjectStore('projects',{keyPath:'id'});if(!db.objectStoreNames.contains('tasks'))db.createObjectStore('tasks',{keyPath:'id',autoIncrement:true}).createIndex('projectId','projectId');if(!db.objectStoreNames.contains('accomplishments'))db.createObjectStore('accomplishments',{keyPath:'id',autoIncrement:true}).createIndex('date','date');};req.onsuccess=e=>{db=e.target.result;r(db)};});
+        let db;const DB_VERSION=20;
+        const openDB=()=>new Promise(r=>{const req=indexedDB.open('tikrDB',DB_VERSION);req.onupgradeneeded=e=>{db=e.target.result;if(!db.objectStoreNames.contains('projects'))db.createObjectStore('projects',{keyPath:'id'});if(!db.objectStoreNames.contains('tasks'))db.createObjectStore('tasks',{keyPath:'id',autoIncrement:true}).createIndex('projectId','projectId');if(!db.objectStoreNames.contains('accomplishments'))db.createObjectStore('accomplishments',{keyPath:'id',autoIncrement:true}).createIndex('date','date');};req.onsuccess=e=>{db=e.target.result;r(db)};});
         const addData=(s,d)=>new Promise((rs,rj)=>{const r=db.transaction(s,'readwrite').objectStore(s).add(d);r.onsuccess=e=>rs(e.target.result);r.onerror=e=>rj(e.target.error);});
         const updateData=(s,d)=>new Promise((rs,rj)=>{const r=db.transaction(s,'readwrite').objectStore(s).put(d);r.onsuccess=()=>rs();r.onerror=e=>rj(e.target.error);});
         const deleteData=(s,i)=>new Promise(r=>db.transaction(s,'readwrite').objectStore(s).delete(i).onsuccess=()=>r());
@@ -251,9 +269,9 @@
         const applyTheme=(t)=>{if(t==='dark'){document.documentElement.classList.add('dark');if(dom.darkModeToggle)dom.darkModeToggle.checked=true;}else{document.documentElement.classList.remove('dark');if(dom.darkModeToggle)dom.darkModeToggle.checked=false;}};
         const toggleTheme=()=>{const n=(localStorage.getItem('theme')||'light')==='dark'?'light':'dark';localStorage.setItem('theme',n);applyTheme(n);};
 
-        const exportDataAsJSON=async(isAuto=false)=>{const all={projects:await getAllData('projects'),tasks:await getAllData('tasks'),accomplishments:await getAllData('accomplishments')};const d=new Date().toISOString().split('T')[0];const f=isAuto?`hub_tracker_auto_backup_${d}.json`:'hub_tracker_manual_backup.json';downloadFile(JSON.stringify(all,null,2),f,'application/json');if(isAuto)localStorage.setItem('lastAutoBackup',new Date().toISOString());};
+        const exportDataAsJSON=async(isAuto=false)=>{const all={projects:await getAllData('projects'),tasks:await getAllData('tasks'),accomplishments:await getAllData('accomplishments')};const d=new Date().toISOString().split('T')[0];const f=isAuto?`tikr_auto_backup_${d}.json`:'tikr_manual_backup.json';downloadFile(JSON.stringify(all,null,2),f,'application/json');if(isAuto)localStorage.setItem('lastAutoBackup',new Date().toISOString());};
         const importDataFromJSON=(e)=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=async(ev)=>{try{const d=JSON.parse(ev.target.result);if(!d.projects||!d.tasks)throw new Error("Invalid format.");if(confirm("This will overwrite all current data. Are you sure?")){await Promise.all([clearData('projects'),clearData('tasks'),clearData('accomplishments')]);await Promise.all(d.projects.map(p=>addData('projects',p)));await Promise.all(d.tasks.map(t=>addData('tasks',t)));if(d.accomplishments)await Promise.all(d.accomplishments.map(a=>addData('accomplishments',a)));alert("Imported!");await loadData();navigateTo('page-tracker');}}catch(err){alert("Failed: "+err.message);}finally{if(dom.importFileInput)dom.importFileInput.value=null;}};r.readAsText(f);};
-        const exportTasksAsCSV=()=>{const s=dom.csvDateStart.value,e=dom.csvDateEnd.value;if(!s||!e)return alert("Please select dates.");const sMs=new Date(s).getTime(),eMs=new Date(e).setHours(23,59,59,999);const fTs=tasks.filter(t=>t.startTime>=sMs&&t.startTime<=eMs);if(fTs.length===0)return alert("No tasks in date range.");const pM=new Map(projects.map(p=>[p.id,p]));let c='Project,Description,Notes,Tags,Date,Start,End,Duration,Rate,Earnings\n';fTs.forEach(t=>{const p=pM.get(t.projectId)||{};const dMs=t.endTime-t.startTime;const dH=dMs/3600000;const n=(p.rate&&dH)?(p.rate*dH).toFixed(2):'0.00';const sT=new Date(t.startTime),eT=new Date(t.endTime);const r=[`"${p.name||''}"`,`"${(t.description||'').replace(/"/g,'""')}"`,`"${(t.notes||'').replace(/"/g,'""')}"`,`"${(t.tags||[]).join(', ')}"`,sT.toLocaleDateString(),sT.toLocaleTimeString(),eT.toLocaleTimeString(),formatTime(dMs),p.rate||'0',n];c+=r.join(',')+'\n';});downloadFile(c,`hub_tracker_export_${s}_to_${e}.csv`,'text/csv;charset=utf-8;');};
+        const exportTasksAsCSV=()=>{const s=dom.csvDateStart.value,e=dom.csvDateEnd.value;if(!s||!e)return alert("Please select dates.");const sMs=new Date(s).getTime(),eMs=new Date(e).setHours(23,59,59,999);const fTs=tasks.filter(t=>t.startTime>=sMs&&t.startTime<=eMs);if(fTs.length===0)return alert("No tasks in date range.");const pM=new Map(projects.map(p=>[p.id,p]));let c='Project,Description,Notes,Tags,Date,Start,End,Duration,Rate,Earnings\n';fTs.forEach(t=>{const p=pM.get(t.projectId)||{};const dMs=t.endTime-t.startTime;const dH=dMs/3600000;const n=(p.rate&&dH)?(p.rate*dH).toFixed(2):'0.00';const sT=new Date(t.startTime),eT=new Date(t.endTime);const r=[`"${p.name||''}"`,`"${(t.description||'').replace(/"/g,'""')}"`,`"${(t.notes||'').replace(/"/g,'""')}"`,`"${(t.tags||[]).join(', ')}"`,sT.toLocaleDateString(),sT.toLocaleTimeString(),eT.toLocaleTimeString(),formatTime(dMs),p.rate||'0',n];c+=r.join(',')+'\n';});downloadFile(c,`tikr_export_${s}_to_${e}.csv`,'text/csv;charset=utf-8;');};
         const scheduleAutomaticBackup=()=>{if(localStorage.getItem('autoBackupEnabled')!=='true')return;const lB=localStorage.getItem('lastAutoBackup');const n=new Date();if(lB){const lBD=new Date(lB);if(lBD.toDateString()===n.toDateString())return;}if(n.getHours()>=12){exportDataAsJSON(true).then(updateLastBackupInfo);}};
         const updateLastBackupInfo=()=>{const lB=localStorage.getItem('lastAutoBackup');if(lB){if(dom.lastBackupInfo)dom.lastBackupInfo.textContent=`Last backup: ${new Date(lB).toLocaleDateString()}`;}else{if(dom.lastBackupInfo)dom.lastBackupInfo.textContent='Backs up at 12:00 PM daily.';}};
 
@@ -285,76 +303,75 @@
         const renderDashboardProjects = () => {
             let sP=[...projects];
             if(currentSort==='name'){sP.sort((a,b)=>a.name.localeCompare(b.name));}
-            else if(currentSort==='latest'){const l={};tasks.forEach(t=>{if(!l[t.projectId]||t.endTime>l[t.projectId])l[t.projectId]=t.endTime;});sP.sort((a,b)=>(l[b.id]||0)-(l[a.id]||0));}
+            else if (currentSort.startsWith('time')) {
+                const direction = currentSort === 'time_desc' ? 1 : -1;
+                sP.sort((a, b) => (getTodaysTimeForProjectMs(a.id) - getTodaysTimeForProjectMs(b.id)) * direction);
+            }
+            else { const l={};tasks.forEach(t=>{if(!l[t.projectId]||t.endTime>l[t.projectId])l[t.projectId]=t.endTime;}); sP.sort((a,b)=>(l[b.id]||0)-(l[a.id]||0)); }
             document.getElementById('dashboard-projects-list').innerHTML=sP.map(p=>{const isR=activeTimer?.projectId===p.id;const tTMs=getTotalTimeForProject(p.id);const pgr=p.estimate>0?(tTMs/(p.estimate*3600000))*100:0;const dTsH=p.definedTasks?.length>0?`<div class="flex flex-wrap gap-2 pt-4">${p.definedTasks.map(t=>`<button class="defined-task-btn text-xs font-semibold px-2 py-1 rounded-md bg-[var(--muted)] hover:bg-opacity-80">${t}</button>`).join('')}</div>`:'';const expC=`<div class="expanded-content"><div>${dTsH}<div class="pt-4 space-y-3"><input type="text" placeholder="What are you working on?" class="task-description-input w-full p-2 rounded-md border border-[var(--input-border)] bg-[var(--input-bg)]" value="${isR?activeTimer.description:''}"><textarea placeholder="Notes..." class="task-notes-input w-full p-2 rounded-md border h-16 bg-[var(--input-bg)]">${isR?activeTimer.notes:''}</textarea><input type="text" placeholder="Add tags... (#meeting)" class="task-tags-input w-full p-2 rounded-md border bg-[var(--input-bg)]" value="${isR?(activeTimer.tags||[]).join(' '):''}"></div></div></div>`;
-                return `<div class="project-card bg-[var(--card)] rounded-xl shadow-sm border border-[var(--border)] p-4 transition-all duration-300 relative ${isR?'is-running':''}" style="--project-color:${p.color};--project-color-glow:${p.color}40;" data-project-id="${p.id}"><div class="flex items-start justify-between"><div class="flex items-start space-x-4 flex-grow min-w-0"><span class="w-4 h-4 rounded-full flex-shrink-0 mt-1.5" style="background-color:${p.color};"></span><div class="flex-grow min-w-0"><div class="flex items-start space-x-2"><button class="font-semibold project-name-link truncate text-left hover:underline text-lg" data-project-id="${p.id}">${p.name}</button></div>${isR?`<div class="text-sm font-medium text-gray-500">Today: ${formatDuration(tasks.filter(t=>t.projectId===p.id&&new Date(t.endTime).toDateString()===new Date().toDateString()).reduce((s,t)=>s+(t.endTime-t.startTime),0))}</div>`:''}</div></div><div class="flex items-center space-x-4"><div class="text-xl font-bold ${isR?'text-green-500 live-timer-display':'text-gray-400'} timer-display">${isR?formatTime(Date.now()-activeTimer.startTime):formatDuration(tTMs)}</div><button class="timer-control-btn ${isR?'stop-timer-btn bg-red-500':'start-timer-btn bg-gray-600'} text-white w-10 h-10 rounded-lg flex items-center justify-center"><svg fill="currentColor" class="w-6 h-6">${isR?'<path d="M6 6h12v12H6z"/>':'<path d="M8 5v14l11-7z"/>'}</svg></button></div></div>${expC}${p.estimate>0?`<div class="progress-bar-bg mt-4"><div class="progress-bar-fg" style="width:${Math.min(100,pgr)}%;background-color:${p.color};"></div></div>`:''}</div>`;}).join('');
+                return `<div class="project-card bg-[var(--card)] rounded-xl shadow-sm border border-[var(--border)] p-4 transition-all duration-300 relative ${isR?'is-running':''}" style="--project-color:${p.color};--project-color-glow:${p.color}40;" data-project-id="${p.id}"><div class="flex items-start justify-between"><div class="flex items-start space-x-4 flex-grow min-w-0"><span class="w-4 h-4 rounded-full flex-shrink-0 mt-1.5" style="background-color:${p.color};"></span><div class="flex-grow min-w-0"><div class="flex items-start space-x-2"><button class="font-semibold project-name-link truncate text-left hover:underline text-lg" data-project-id="${p.id}">${p.name}</button></div>${isR?`<div class="text-sm font-medium text-gray-500">Today: ${formatDuration(getTodaysTimeForProjectMs(p.id))}</div>`:''}</div></div><div class="flex items-center space-x-4"><div class="text-xl font-bold ${isR?'text-green-500 live-timer-display':'text-gray-400'} timer-display">${isR?formatTime(Date.now()-activeTimer.startTime):formatDuration(tTMs)}</div><button class="timer-control-btn ${isR?'stop-timer-btn bg-red-500':'start-timer-btn bg-gray-600'} text-white w-10 h-10 rounded-lg flex items-center justify-center"><svg fill="currentColor" class="w-6 h-6">${isR?'<path d="M6 6h12v12H6z"/>':'<path d="M8 5v14l11-7z"/>'}</svg></button></div></div>${expC}${p.estimate>0?`<div class="progress-bar-bg mt-4"><div class="progress-bar-fg" style="width:${Math.min(100,pgr)}%;background-color:${p.color};"></div></div>`:''}</div>`;}).join('');
         };
         
-        const renderReportsPage=(filter='week',range={})=>{const n=new Date();let sD,eD;if(filter==='day'){sD=new Date(n).setHours(0,0,0,0);eD=new Date(n).setHours(23,59,59,999);}else if(filter==='week'){const d=n.getDay(),f=n.getDate()-d;sD=new Date(new Date(n).setDate(f)).setHours(0,0,0,0);eD=new Date(new Date(n).setDate(f+6)).setHours(23,59,59,999);}else if(filter==='month'){sD=new Date(n.getFullYear(),n.getMonth(),1);eD=new Date(n.getFullYear(),n.getMonth()+1,0).setHours(23,59,59,999);}else if(filter==='custom'&&range.start&&range.end){sD=new Date(range.start).getTime();eD=new Date(range.end).setHours(23,59,59,999);}const fTs=tasks.filter(t=>t.startTime>=sD&&t.startTime<=eD);const tMs=fTs.reduce((s,t)=>s+(t.endTime-t.startTime),0);
+        const renderReportsPage=(filter='week',range={})=>{const n=new Date();let sD,eD;if(filter==='day'){sD=new Date(n).setHours(0,0,0,0);eD=new Date(n).setHours(23,59,59,999);}else if(filter==='week'){const d=n.getDay()||7,f=n.getDate()-d+1;sD=new Date(new Date(n).setDate(f)).setHours(0,0,0,0);eD=new Date(new Date(n).setDate(f+6)).setHours(23,59,59,999);}else if(filter==='month'){sD=new Date(n.getFullYear(),n.getMonth(),1);eD=new Date(n.getFullYear(),n.getMonth()+1,0).setHours(23,59,59,999);}else if(filter==='custom'&&range.start&&range.end){sD=new Date(range.start).getTime();eD=new Date(range.end).setHours(23,59,59,999);}const fTs=tasks.filter(t=>t.startTime>=sD&&t.startTime<=eD);const tMs=fTs.reduce((s,t)=>s+(t.endTime-t.startTime),0);
             document.getElementById('reports-content').innerHTML=`<div class="p-2 bg-[var(--muted)] rounded-xl flex text-center text-sm font-semibold mb-4"><button data-filter="day" class="reports-filter-btn flex-1 py-2 rounded-lg ${filter==='day'?'bg-[var(--card)] shadow':''}">Day</button><button data-filter="week" class="reports-filter-btn flex-1 py-2 rounded-lg ${filter==='week'?'bg-[var(--card)] shadow':''}">Week</button><button data-filter="month" class="reports-filter-btn flex-1 py-2 rounded-lg ${filter==='month'?'bg-[var(--card)] shadow':''}">Month</button><button data-filter="custom" class="reports-filter-btn flex-1 py-2 rounded-lg ${filter==='custom'?'bg-[var(--card)] shadow':''}">Custom</button></div>
             <div id="reports-custom-range" class="flex items-center gap-2 text-sm mb-4 ${filter==='custom'?'':'hidden'}"><input type="date" id="reports-date-start" class="w-full p-2 border rounded-md text-sm bg-[var(--input-bg)]"><span class="text-[var(--muted-foreground)]">to</span><input type="date" id="reports-date-end" class="w-full p-2 border rounded-md text-sm bg-[var(--input-bg)]"></div>
             <div class="bg-[var(--card)] p-4 rounded-xl border mb-4 space-y-3"><div class="flex justify-between items-center"><p class="text-sm text-[var(--muted-foreground)]">Total Time</p><p class="text-2xl font-bold">${formatDuration(tMs)}</p></div><div id="earnings-display" class="hidden flex justify-between items-center pt-3 border-t"><p class="text-sm text-[var(--muted-foreground)]">Total Earnings</p><p id="total-earnings-amount" class="text-2xl font-bold text-green-600">$0.00</p></div></div><button id="calculate-earnings-btn" class="w-full mb-4 py-2 px-4 rounded-lg font-semibold border hover:bg-[var(--muted)]">Calculate Earnings</button><div id="reports-entries-list" class="space-y-3">${fTs.length>0?fTs.sort((a,b)=>b.startTime-a.startTime).map(t=>{const p=projects.find(j=>j.id===t.projectId);return`<div class="bg-[var(--card)] p-3 rounded-lg border flex items-center justify-between"><div><p class="font-semibold">${t.description}</p><p class="text-sm" style="color:${p?.color||'var(--muted-foreground)'}">${p?.name||''}</p><div class="flex flex-wrap gap-1 mt-1">${(t.tags||[]).map(g=>`<span class="tag">${g}</span>`).join('')}</div></div><div class="font-semibold text-right">${formatDuration(t.endTime-t.startTime)}</div></div>`}).join(''):`<div class="text-center py-10"><p class="font-semibold">No entries</p></div>`}</div>`;
         };
-        const renderSettingsPage = () => { const content = document.getElementById('settings-template').content.cloneNode(true); document.getElementById('settings-content').innerHTML = ''; document.getElementById('settings-content').appendChild(content); dom.darkModeToggle=document.getElementById('dark-mode-toggle');dom.autoBackupToggle=document.getElementById('auto-backup-toggle');dom.lastBackupInfo=document.getElementById('last-backup-info');dom.importFileInput=document.getElementById('import-file-input');dom.csvDateStart=document.getElementById('csv-date-start');dom.csvDateEnd=document.getElementById('csv-date-end');applyTheme(localStorage.getItem('theme')||'light');dom.autoBackupToggle.checked=localStorage.getItem('autoBackupEnabled')==='true';updateLastBackupInfo();};
+        const renderSettingsPage = () => { const content = document.getElementById('settings-template').content.cloneNode(true); document.getElementById('settings-content').innerHTML = ''; document.getElementById('settings-content').appendChild(content); dom.darkModeToggle=document.getElementById('dark-mode-toggle');dom.autoBackupToggle=document.getElementById('auto-backup-toggle');dom.lastBackupInfo=document.getElementById('last-backup-info');dom.importFileInput=document.getElementById('import-file-input');dom.csvDateStart=document.getElementById('csv-date-start');dom.csvDateEnd=document.getElementById('csv-date-end');applyTheme(localStorage.getItem('theme')||'light');dom.autoBackupToggle.checked=localStorage.getItem('autoBackupEnabled')==='true';updateLastBackupInfo(); document.getElementById('detected-time-zone').textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;};
         const renderAccomplishmentsPage = () => { const content=document.getElementById('accomplishments-template').content.cloneNode(true);const ac=document.getElementById('accomplishments-content');ac.innerHTML='';ac.appendChild(content);dom.accomplishmentProjectSelect=document.getElementById('accomplishment-project-select');dom.accomplishmentText=document.getElementById('accomplishment-text');dom.accomplishmentTags=document.getElementById('accomplishment-tags');dom.accomplishmentsList=document.getElementById('accomplishments-list');dom.accomplishmentProjectSelect.innerHTML=`<option value="">Select project</option>`+projects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');dom.accomplishmentText.value='';dom.accomplishmentsList.innerHTML=accomplishments.sort((a,b)=>b.date-a.date).map(acc=>{const p=projects.find(j=>j.id===acc.projectId);return`<div class="bg-[var(--card)] p-3 rounded-lg border"><p>${acc.text}</p><div class="flex flex-wrap gap-1 mt-2">${(acc.tags||[]).map(g=>`<span class="tag">${g}</span>`).join('')}</div><p class="text-xs text-[var(--muted-foreground)] mt-2 font-semibold" style="color:${p?.color||'gray'}">${p?.name||''}&bull;${new Date(acc.date).toLocaleDateString()}</p></div>`;}).join('');};
         const saveAccomplishment=async()=>{const pId=parseInt(dom.accomplishmentProjectSelect.value);const t=dom.accomplishmentText.value.trim();if(!pId||!t)return alert("Please complete the form.");const tagsInput=dom.accomplishmentTags.value.trim();const tags=tagsInput?tagsInput.split(/[\s,]+/).map(t=>t.startsWith('#')?t:t):[];const nA={projectId:pId,text:t,tags,date:Date.now()};nA.id=await addData('accomplishments',nA);accomplishments.push(nA);renderAccomplishmentsPage();};
         
         const openProjectDetailView=(id)=>{navigateTo('page-detail');currentDetailProjectId=id;const p=projects.find(p=>p.id===id);if(!p)return;const definedTasksText=(p.definedTasks||[]).join('\n');
             document.getElementById('detail-view-content').innerHTML=`<div id="project-detail-view-mode"><header class="flex items-start justify-between mb-6"><div><h1 class="text-2xl font-bold" style="color:${p.color};">${p.name}</h1><p class="text-sm text-[var(--muted-foreground)]">Details & History</p></div><div class="flex items-center gap-2"><button id="add-manual-entry-btn" class="text-sm font-semibold py-2 px-4 rounded-lg bg-blue-600 text-white">Manual Entry</button><button id="edit-project-btn" class="text-sm font-semibold py-2 px-4 rounded-lg bg-[var(--muted)] hover:bg-opacity-80">Edit</button></div></header></div>
-            <div id="project-detail-edit-mode" class="hidden mb-6 space-y-3 p-4 bg-[var(--muted)] rounded-lg"><input type="text" id="edit-project-name" class="w-full p-2 text-xl font-bold border rounded-md bg-[var(--input-bg)]" value="${p.name}"><div class="flex items-center gap-4"><div class="flex-grow"></div><input type="color" id="edit-project-color" value="${p.color}" class="w-16 h-10 p-1 border rounded-md bg-[var(--input-bg)]"></div>
+            <div id="project-detail-edit-mode" class="hidden mb-6 space-y-3 p-4 bg-[var(--muted)] rounded-lg"><div class="flex gap-4"><input type="text" id="edit-project-name" class="w-full p-2 text-xl font-bold border rounded-md bg-[var(--input-bg)]" value="${p.name}"><input type="color" id="edit-project-color" value="${p.color}" class="w-16 h-12 p-1 border rounded-md bg-[var(--input-bg)]"></div>
             <div class="grid grid-cols-2 gap-4"><input type="number" id="edit-project-rate" placeholder="Rate ($/hr)" value="${p.rate||''}" class="w-full p-2 border rounded-md text-sm bg-[var(--input-bg)]"><input type="number" id="edit-project-estimate" placeholder="Estimate (hrs)" value="${p.estimate||''}" class="w-full p-2 border rounded-md text-sm bg-[var(--input-bg)]"></div>
             <textarea id="edit-project-defined-tasks" rows="3" class="w-full p-2 border rounded-md text-sm bg-[var(--input-bg)]" placeholder="Defined tasks...">${definedTasksText}</textarea>
             <div class="flex justify-end gap-2"><button id="cancel-edit-project-btn" class="font-semibold px-4 py-2 rounded-lg hover:bg-gray-300">Cancel</button><button id="save-updated-project-btn" class="font-semibold px-4 py-2 rounded-lg bg-[var(--primary)] text-[var(--primary-foreground)]">Save</button></div></div>
             <div class="flex flex-wrap items-center gap-2 mb-4 p-2 bg-[var(--muted)] rounded-lg"><div class="flex-grow flex space-x-1" id="detail-filter-buttons"><button class="px-3 py-1 text-sm font-semibold rounded-md flex-grow filter-btn active bg-[var(--card)]" data-filter="today">Today</button><button class="px-3 py-1 text-sm rounded-md flex-grow filter-btn" data-filter="week">Week</button><button class="px-3 py-1 text-sm rounded-md flex-grow filter-btn" data-filter="month">Month</button></div><div class="flex items-center gap-2 text-sm"><input type="date" id="date-range-start" class="p-1 border rounded-md text-xs bg-[var(--input-bg)]"><span>to</span><input type="date" id="date-range-end" class="p-1 border rounded-md text-xs bg-[var(--input-bg)]"></div></div>
             <div class="mb-6 p-4 bg-[var(--card)] rounded-xl border"><p class="text-sm text-[var(--muted-foreground)]">Total Time for Period</p><p id="detail-total-time" class="text-3xl font-bold">0h 0m</p></div><div id="detail-entries-list" class="space-y-3"></div>`;renderProjectEntries(id,'today');};
-        const renderProjectEntries=(id,filter,range={})=>{let sD,eD;const n=new Date();if(filter==='today'){sD=new Date().setHours(0,0,0,0);eD=new Date().setHours(23,59,59,999);}else if(filter==='week'){const d=n.getDay(),f=n.getDate()-d;sD=new Date(new Date().setDate(f)).setHours(0,0,0,0);eD=new Date(new Date().setDate(f+6)).setHours(23,59,59,999);}else if(filter==='month'){sD=new Date(n.getFullYear(),n.getMonth(),1);eD=new Date(n.getFullYear(),n.getMonth()+1,0).setHours(23,59,59,999);}else if(filter==='range'&&range.start&&range.end){sD=new Date(range.start).getTime();eD=new Date(range.end).setHours(23,59,59,999);}const fTs=tasks.filter(t=>t.projectId===id&&t.startTime>=sD&&t.startTime<=eD).sort((a,b)=>b.startTime-a.startTime);const tMs=fTs.reduce((s,t)=>s+(t.endTime-t.startTime),0);const tEl=document.getElementById('detail-total-time');if(tEl)tEl.textContent=formatDuration(tMs);const lEl=document.getElementById('detail-entries-list');if(lEl)lEl.innerHTML=fTs.length>0?fTs.map(createTaskEntryHTML).join(''):`<p class="text-center p-4">No entries.</p>`;};
-        const createTaskEntryHTML=(t)=>{const sT=new Date(t.startTime),eT=new Date(t.endTime);const dur=formatDuration(t.endTime-t.startTime);const dStr=sT.toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'});const tStr=`${sT.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})} - ${eT.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`;
+        const renderProjectEntries=(id,filter,range={})=>{let sD,eD;const n=new Date();if(filter==='today'){sD=new Date().setHours(0,0,0,0);eD=new Date().setHours(23,59,59,999);}else if(filter==='week'){const d=n.getDay()||7,f=n.getDate()-d+1;sD=new Date(new Date(n).setDate(f)).setHours(0,0,0,0);eD=new Date(new Date(n).setDate(f+6)).setHours(23,59,59,999);}else if(filter==='month'){sD=new Date(n.getFullYear(),n.getMonth(),1);eD=new Date(n.getFullYear(),n.getMonth()+1,0).setHours(23,59,59,999);}else if(filter==='range'&&range.start&&range.end){sD=new Date(range.start).getTime();eD=new Date(range.end).setHours(23,59,59,999);}const fTs=tasks.filter(t=>t.projectId===id&&t.startTime>=sD&&t.startTime<=eD).sort((a,b)=>b.startTime-a.startTime);const tMs=fTs.reduce((s,t)=>s+(t.endTime-t.startTime),0);const tEl=document.getElementById('detail-total-time');if(tEl)tEl.textContent=formatDuration(tMs);const lEl=document.getElementById('detail-entries-list');if(lEl)lEl.innerHTML=fTs.length>0?fTs.map(t => createTaskEntryHTML(t, projects.find(p => p.id === t.projectId))).join(''):`<p class="text-center p-4">No entries.</p>`;};
+        const createTaskEntryHTML=(t,p)=>{const sT=new Date(t.startTime),eT=new Date(t.endTime);const dur=formatDuration(t.endTime-t.startTime);const dStr=sT.toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'});const tStr=`${sT.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})} - ${eT.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`;const dTsH=p?.definedTasks?.length>0?`<div class="flex flex-wrap gap-2 pt-2">${p.definedTasks.map(task=>`<button class="defined-task-btn text-xs font-semibold px-2 py-1 rounded-md bg-[var(--muted)] hover:bg-opacity-80">${task}</button>`).join('')}</div>`:'';
             return `<div class="task-entry bg-[var(--card)] p-3 rounded-lg border" data-task-id="${t.id}"><div class="view-mode"><div class="flex justify-between items-start"><div class="flex-grow"><p class="font-semibold">${t.description}</p><p class="text-sm text-[var(--muted-foreground)] whitespace-pre-wrap">${t.notes||'No notes'}</p><div class="text-sm text-[var(--muted-foreground)] mt-2">${dStr}&bull;${tStr}</div></div><div class="flex items-center gap-4 ml-4 flex-shrink-0"><span class="font-semibold">${dur}</span><button class="edit-task-btn text-xs font-semibold text-blue-600 hover:underline">Edit</button><button class="delete-task-btn text-xs font-semibold text-red-600 hover:underline">Delete</button></div></div></div>
-            <div class="edit-mode hidden space-y-2"><input class="w-full p-2 text-sm border rounded-md bg-[var(--input-bg)]" value="${t.description}"><textarea class="w-full p-2 text-sm border rounded-md h-20 bg-[var(--input-bg)]">${t.notes}</textarea><div class="flex items-center gap-2"><input type="date" class="w-full p-1 text-xs border rounded-md bg-[var(--input-bg)]" value="${sT.toISOString().split('T')[0]}"><input type="time" class="w-full p-1 text-xs border" value="${sT.toTimeString().slice(0,5)}"><input type="time" class="w-full p-1 text-xs border" value="${eT.toTimeString().slice(0,5)}"></div><div class="flex justify-end gap-2"><button class="cancel-edit-btn px-3 py-1 text-xs bg-gray-200 rounded-md">Cancel</button><button class="save-task-btn px-3 py-1 text-xs text-white bg-blue-600 rounded-md">Save</button></div></div></div>`;};
+            <div class="edit-mode hidden space-y-2">${dTsH}<input class="w-full p-2 text-sm border rounded-md bg-[var(--input-bg)] edit-task-description" value="${t.description}"><textarea class="w-full p-2 text-sm border rounded-md h-20 bg-[var(--input-bg)]">${t.notes}</textarea><input type="text" placeholder="Add tags..." class="w-full p-2 text-sm border rounded-md bg-[var(--input-bg)]" value="${(t.tags||[]).join(' ')}"><div class="flex items-center gap-2"><input type="date" class="w-full p-1 text-xs border rounded-md bg-[var(--input-bg)]" value="${sT.toISOString().split('T')[0]}"><input type="time" class="w-full p-1 text-xs border" value="${sT.toTimeString().slice(0,5)}"><input type="time" class="w-full p-1 text-xs border" value="${eT.toTimeString().slice(0,5)}"></div><div class="flex justify-end gap-2"><button class="cancel-edit-btn px-3 py-1 text-xs bg-gray-200 rounded-md">Cancel</button><button class="save-task-btn px-3 py-1 text-xs text-white bg-blue-600 rounded-md">Save</button></div></div></div>`;};
         const saveManualEntry = async (e) => {
             e.preventDefault();
-            const desc = document.getElementById('manual-entry-desc').value;
-            const date = document.getElementById('manual-entry-date').value;
-            const start = document.getElementById('manual-entry-start').value;
-            const end = document.getElementById('manual-entry-end').value;
-            const notes = document.getElementById('manual-entry-notes').value;
-            if (!desc || !date || !start || !end) return alert("Please fill all required fields.");
-            const startTime = new Date(`${date}T${start}`).getTime();
-            const endTime = new Date(`${date}T${end}`).getTime();
-            if(startTime >= endTime) return alert("End time must be after start time.");
-
-            const newTask = { projectId: currentDetailProjectId, description: desc, notes, startTime, endTime, tags: [] };
-            await addData('tasks', newTask);
-            tasks.push(newTask);
+            const desc=document.getElementById('manual-entry-desc').value,date=document.getElementById('manual-entry-date').value,start=document.getElementById('manual-entry-start').value,end=document.getElementById('manual-entry-end').value,notes=document.getElementById('manual-entry-notes').value;
+            if(!desc||!date||!start||!end)return alert("Please fill all required fields.");
+            const startTime=new Date(`${date}T${start}`).getTime(),endTime=new Date(`${date}T${end}`).getTime();
+            if(startTime>=endTime)return alert("End time must be after start time.");
+            const newTask={projectId:currentDetailProjectId,description:desc,notes,startTime,endTime,tags:[]};
+            newTask.id = await addData('tasks',newTask); tasks.push(newTask);
             closeModal(document.getElementById('manual-entry-modal'));
-            const currentFilter = document.querySelector('#detail-filter-buttons .filter-btn.active').dataset.filter;
-            renderProjectEntries(currentDetailProjectId, currentFilter);
+            const cF=document.querySelector('#detail-filter-buttons .filter-btn.active').dataset.filter;
+            renderProjectEntries(currentDetailProjectId,cF);
+            updateDashboardTotalTime(); renderDashboardProjects();
         };
 
-        const showUserGuide=()=>{document.getElementById('guide-content').innerHTML=`<h2 class="text-2xl font-bold mb-4">Welcome to Hub Tracker!</h2><div class="prose dark:prose-invert max-w-none space-y-4 text-[var(--foreground)]"><p>This guide explains the features to help you track time effectively.</p><h3 class="font-semibold">1. Creating a "Power Project"</h3><p>When creating a project, click "<strong>Add Details & Goals</strong>" for advanced options:</p><ul><li><strong>Billing Rate ($/hr):</strong> Set a rate to automatically calculate earnings in reports.</li><li><strong>Time Estimate (hours):</strong> Set a time budget for your project to see a progress bar on its card.</li><li><strong>Pre-defined Tasks:</strong> List common tasks (one per line). These become clickable buttons when you start the timer.</li></ul><h3 class="font-semibold">2. Enhanced Time Tracking</h3><ul><li><strong>Manual Entry:</strong> On a project's detail page, click "Manual Entry" to add time you forgot to track.</li><li><strong>Adding Tags:</strong> Use the "Tags" input to categorize work (e.g., <code>#meeting</code> <code>#bugfix</code>).</li></ul><h3 class="font-semibold">3. Reports with Earnings</h3><p>On the <strong>Reports</strong> page, click "<strong>Calculate Earnings</strong>." If your projects have a billing rate, the app calculates and displays total earnings for that period.</p><h3 class="font-semibold">4. PWA & Automatic Backups</h3><ul><li><strong>Installable App (PWA):</strong> Your browser may show an option to "Install" or "Add to Home Screen" to use Hub Tracker like a native app.</li><li><strong>Automatic Backups:</strong> In <strong>Settings</strong>, enable "Automatic Daily Backups" to save a JSON backup to your downloads folder every day after 12:00 PM.</li></ul></div>`;openModal(document.getElementById('guide-modal'));};
+        const showUserGuide=()=>{document.getElementById('guide-content').innerHTML=`<h2 class="text-2xl font-bold mb-4">Welcome to tikr!</h2><div class="prose dark:prose-invert max-w-none space-y-4 text-[var(--foreground)]"><p>This guide explains the features to help you track time effectively.</p><h3 class="font-semibold">1. Creating a "Power Project"</h3><p>When creating a project, click "<strong>Add Details & Goals</strong>" for advanced options:</p><ul><li><strong>Billing Rate ($/hr):</strong> Set a rate to automatically calculate earnings in reports.</li><li><strong>Time Estimate (hours):</strong> Set a time budget for your project to see a progress bar on its card.</li><li><strong>Pre-defined Tasks:</strong> List common tasks (one per line). These become clickable buttons when you start the timer.</li></ul><h3 class="font-semibold">2. Enhanced Time Tracking</h3><ul><li><strong>Manual Entry:</strong> On a project's detail page, click "Manual Entry" to add time you forgot to track.</li><li><strong>Adding Tags:</strong> Use the "Tags" input to categorize work (e.g., <code>#meeting</code> <code>#bugfix</code>).</li></ul><h3 class="font-semibold">3. Reports with Earnings</h3><p>On the <strong>Reports</strong> page, click "<strong>Calculate Earnings</strong>." If your projects have a billing rate, the app calculates and displays total earnings for that period.</p><h3 class="font-semibold">4. PWA & Automatic Backups</h3><ul><li><strong>Installable App (PWA):</strong> Your browser may show an option to "Install" or "Add to Home Screen" to use tikr like a native app.</li><li><strong>Automatic Backups:</strong> In <strong>Settings</strong>, enable "Automatic Daily Backups" to save a JSON backup to your downloads folder every day after 12:00 PM.</li></ul></div>`;openModal(document.getElementById('guide-modal'));};
         
         document.getElementById('app-container').addEventListener('click', async e => {
-            const navBtn=e.target.closest('.nav-btn');if(navBtn)return navigateTo(navBtn.dataset.page);
-            const addProjectBtn=e.target.closest('#add-project-btn');if(addProjectBtn)return openModal(document.getElementById('add-project-modal'));
-            const cancelAddProjectBtn=e.target.closest('#cancel-add-project-btn');if(cancelAddProjectBtn)return closeModal(document.getElementById('add-project-modal'));
-            const toggleAdvancedBtn=e.target.closest('#toggle-advanced-btn');if(toggleAdvancedBtn)return document.getElementById('advanced-project-options').classList.toggle('hidden');
-            const sortBtn=e.target.closest('.sort-btn');if(sortBtn){document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));sortBtn.classList.add('active');currentSort=sortBtn.dataset.sort;renderDashboardProjects();}
-            const reportsFilterBtn=e.target.closest('.reports-filter-btn');if(reportsFilterBtn)renderReportsPage(reportsFilterBtn.dataset.filter);
+            if(e.target.closest('.nav-btn'))return navigateTo(e.target.closest('.nav-btn').dataset.page);
+            if(e.target.closest('#add-project-btn'))return openModal(document.getElementById('add-project-modal'));
+            if(e.target.closest('#cancel-add-project-btn'))return closeModal(document.getElementById('add-project-modal'));
+            if(e.target.closest('#toggle-advanced-btn'))return document.getElementById('advanced-project-options').classList.toggle('hidden');
+            if(e.target.closest('.sort-btn')){const sortBtn=e.target.closest('.sort-btn');document.querySelectorAll('.sort-btn').forEach(b=>{b.classList.remove('active');b.querySelector('.sort-arrow')?.setAttribute('style','display:none');});sortBtn.classList.add('active');const sortType=sortBtn.dataset.sort;if(sortType==='time'){const arrow=sortBtn.querySelector('.sort-arrow');arrow.style.display='inline';const currentDir=sortBtn.dataset.dir;const newDir=currentDir==='desc'?'asc':'desc';sortBtn.dataset.dir=newDir;arrow.textContent=newDir==='desc'?'▼':'▲';currentSort=`time_${newDir}`;}else{currentSort=sortType;}renderDashboardProjects();return;}
+            if(e.target.closest('.reports-filter-btn'))return renderReportsPage(e.target.closest('.reports-filter-btn').dataset.filter);
             if(e.target.closest('#calculate-earnings-btn')){const pM=new Map(projects.map(p=>[p.id,p]));let tE=0;tasks.forEach(t=>{const p=pM.get(t.projectId);if(p&&p.rate){const dH=(t.endTime-t.startTime)/3600000;tE+=p.rate*dH;}});document.getElementById('total-earnings-amount').textContent=`$${tE.toFixed(2)}`;document.getElementById('earnings-display').classList.remove('hidden');}
             if(e.target.closest('#save-accomplishment-btn'))saveAccomplishment();
             if(e.target.closest('#import-json-btn'))dom.importFileInput.click();if(e.target.closest('#export-json-btn'))exportDataAsJSON(false);if(e.target.closest('#export-csv-btn'))exportTasksAsCSV();
             if(e.target.closest('#show-guide-btn'))showUserGuide();if(e.target.closest('#close-guide-btn'))closeModal(document.getElementById('guide-modal'));
             const card=e.target.closest('.project-card');if(card){const pId=parseInt(card.dataset.projectId);if(e.target.closest('.start-timer-btn'))startTimer(pId);if(e.target.closest('.stop-timer-btn'))stopTimer();if(e.target.closest('.project-name-link'))openProjectDetailView(pId);if(e.target.closest('.defined-task-btn')&&card.classList.contains('is-running')){const i=card.querySelector('.task-description-input');if(i)i.value=e.target.textContent;}}
-            const detailView=e.target.closest('#detail-view-content');if(detailView){if(e.target.closest('#add-manual-entry-btn')){const modal = document.getElementById('manual-entry-modal'); modal.querySelector('form').reset(); openModal(modal);}
+            const detailView=e.target.closest('#detail-view-content');if(detailView){if(e.target.closest('#add-manual-entry-btn')){const modal=document.getElementById('manual-entry-modal');modal.querySelector('form').reset();openModal(modal);}
             if(e.target.closest('#cancel-manual-entry-btn'))closeModal(document.getElementById('manual-entry-modal'));
             if(e.target.closest('#edit-project-btn')){detailView.querySelector('#project-detail-view-mode').classList.add('hidden');detailView.querySelector('#project-detail-edit-mode').classList.remove('hidden');}
             if(e.target.closest('#cancel-edit-project-btn')){detailView.querySelector('#project-detail-view-mode').classList.remove('hidden');detailView.querySelector('#project-detail-edit-mode').classList.add('hidden');}
             if(e.target.closest('#save-updated-project-btn')){const data={name:detailView.querySelector('#edit-project-name').value,color:detailView.querySelector('#edit-project-color').value,rate:parseFloat(detailView.querySelector('#edit-project-rate').value)||0,estimate:parseFloat(detailView.querySelector('#edit-project-estimate').value)||0,definedTasks:detailView.querySelector('#edit-project-defined-tasks').value.split('\n').map(s=>s.trim()).filter(Boolean)};await updateProject(currentDetailProjectId,data);}
-            const filterBtn=e.target.closest('#detail-filter-buttons .filter-btn');if(filterBtn){detailView.querySelectorAll('#detail-filter-buttons .filter-btn').forEach(b=>b.classList.remove('active','bg-[var(--card)]'));filterBtn.classList.add('active','bg-[var(--card)]');renderProjectEntries(currentDetailProjectId,filterBtn.dataset.filter);}
-            const entryEl=e.target.closest('.task-entry');if(entryEl){const tId=parseInt(entryEl.dataset.taskId);if(e.target.closest('.delete-task-btn')){if(confirm('Delete entry?')){await deleteData('tasks',tId);tasks=tasks.filter(t=>t.id!==tId);const cF=detailView.querySelector('#detail-filter-buttons .filter-btn.active').dataset.filter;renderProjectEntries(currentDetailProjectId,cF);}}
+            if(e.target.closest('#detail-filter-buttons .filter-btn')){const filterBtn=e.target.closest('#detail-filter-buttons .filter-btn');detailView.querySelectorAll('#detail-filter-buttons .filter-btn').forEach(b=>b.classList.remove('active','bg-[var(--card)]'));filterBtn.classList.add('active','bg-[var(--card)]');renderProjectEntries(currentDetailProjectId,filterBtn.dataset.filter);}
+            const entryEl=e.target.closest('.task-entry');if(entryEl){const tId=parseInt(entryEl.dataset.taskId);if(e.target.closest('.delete-task-btn')){if(confirm('Delete entry?')){await deleteData('tasks',tId);tasks=tasks.filter(t=>t.id!==tId);const cF=detailView.querySelector('#detail-filter-buttons .filter-btn.active').dataset.filter;renderProjectEntries(currentDetailProjectId,cF);updateDashboardTotalTime();renderDashboardProjects();}}
             else if(e.target.closest('.edit-task-btn')){entryEl.querySelector('.view-mode').classList.add('hidden');entryEl.querySelector('.edit-mode').classList.remove('hidden');}
             else if(e.target.closest('.cancel-edit-btn')){entryEl.querySelector('.view-mode').classList.remove('hidden');entryEl.querySelector('.edit-mode').classList.add('hidden');}
-            else if(e.target.closest('.save-task-btn')){const t=tasks.find(t=>t.id===tId);if(!t)return;const i=entryEl.querySelectorAll('.edit-mode input, .edit-mode textarea');t.description=i[0].value;t.notes=i[1].value;const nD=i[2].value;t.startTime=new Date(`${nD}T${i[3].value}`).getTime();t.endTime=new Date(`${nD}T${i[4].value}`).getTime();await updateData('tasks',t);const cF=detailView.querySelector('#detail-filter-buttons .filter-btn.active').dataset.filter;renderProjectEntries(currentDetailProjectId,cF);}}}
+            else if(e.target.closest('.save-task-btn')){const t=tasks.find(t=>t.id===tId);if(!t)return;const i=entryEl.querySelectorAll('.edit-mode input, .edit-mode textarea');t.description=i[1].value;t.notes=i[2].value;t.tags=i[3].value.trim().split(/[\s,]+/).filter(Boolean);const nD=i[4].value;t.startTime=new Date(`${nD}T${i[5].value}`).getTime();t.endTime=new Date(`${nD}T${i[6].value}`).getTime();await updateData('tasks',t);const cF=detailView.querySelector('#detail-filter-buttons .filter-btn.active').dataset.filter;renderProjectEntries(currentDetailProjectId,cF);updateDashboardTotalTime();renderDashboardProjects();}
+            else if(e.target.closest('.defined-task-btn')){const i=entryEl.querySelector('.edit-task-description');if(i)i.value=e.target.textContent;}}}
         });
         document.getElementById('add-project-form').addEventListener('submit', saveNewProject);
         document.getElementById('manual-entry-modal').addEventListener('submit', saveManualEntry);
@@ -371,6 +388,31 @@
         const initializeApp=()=>{loadData();checkPersistentTimer();navigateTo('page-tracker');setTimeout(scheduleAutomaticBackup,2000);};
         initializeApp();
     });
+
+    /*
+    ==================================================================
+    PWA Instructions
+    ==================================================================
+    To make this app fully "installable" on a phone or desktop,
+    you need to create these two files in the same folder as your HTML file.
+
+    1. Create a file named: manifest.json
+    --------------------------------------
+    {
+      "name": "tikr", "short_name": "tikr", "description": "A client-side time tracking application.",
+      "start_url": "./[YOUR_HTML_FILE_NAME].html", "display": "standalone", "background_color": "#09090b", "theme_color": "#004d40",
+      "icons": [ { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" }, { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" } ]
+    }
+    NOTE: You will need to create icon-192.png and icon-512.png image files.
+
+    2. Create a file named: sw.js
+    -------------------------------
+    const CACHE_NAME = 'tikr-cache-v1';
+    const urlsToCache = [ './[YOUR_HTML_FILE_NAME].html' ];
+    self.addEventListener('install', e => { e.waitUntil( caches.open(CACHE_NAME).then(c => c.addAll(urlsToCache)) ); });
+    self.addEventListener('fetch', e => { e.respondWith( caches.match(e.request).then(r => r || fetch(e.request)) ); });
+    ==================================================================
+    */
     </script>
 </body>
 </html>
