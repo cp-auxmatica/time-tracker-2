@@ -306,8 +306,33 @@
                 sP.sort((a, b) => (getTodaysTimeForProjectMs(b.id) - getTodaysTimeForProjectMs(a.id)) * direction);
             }
             else { const l={};tasks.forEach(t=>{if(!l[t.projectId]||t.endTime>l[t.projectId])l[t.projectId]=t.endTime;}); sP.sort((a,b)=>(l[b.id]||0)-(l[a.id]||0)); }
-            document.getElementById('dashboard-projects-list').innerHTML=sP.map(p=>{const isR=activeTimer?.projectId===p.id;const tTMs=getTotalTimeForProject(p.id);const pgr=p.estimate>0?(tTMs/(p.estimate*3600000))*100:0;const dTsH=p.definedTasks?.length>0?`<div class="flex flex-wrap gap-2 pt-4">${p.definedTasks.map(t=>`<button class="defined-task-btn text-xs font-semibold px-2 py-1 rounded-md bg-[var(--muted)] hover:bg-opacity-80">${t}</button>`).join('')}</div>`:'';const expC=`<div class="expanded-content"><div>${dTsH}<div class="pt-4 space-y-3"><input type="text" placeholder="What are you working on?" class="task-description-input w-full p-2 rounded-md border border-[var(--input-border)] bg-[var(--input-bg)]" value="${isR?activeTimer.description:''}"><textarea placeholder="Notes..." class="task-notes-input w-full p-2 rounded-md border h-16 bg-[var(--input-bg)]">${isR?activeTimer.notes:''}</textarea><input type="text" placeholder="Add tags... (#meeting)" class="task-tags-input w-full p-2 rounded-md border bg-[var(--input-bg)]" value="${isR?(activeTimer.tags||[]).join(' '):''}"></div></div></div>`;
-                return `<div class="project-card bg-[var(--card)] rounded-xl shadow-sm border border-[var(--border)] p-4 transition-all duration-300 relative ${isR?'is-running':''}" style="--project-color:${p.color};--project-color-glow:${p.color}40;" data-project-id="${p.id}"><div class="flex items-start justify-between"><div class="flex items-start space-x-4 flex-grow min-w-0"><span class="w-4 h-4 rounded-full flex-shrink-0 mt-1.5" style="background-color:${p.color};"></span><div class="flex-grow min-w-0"><div class="flex items-start space-x-2"><button class="font-semibold project-name-link truncate text-left hover:underline text-lg" data-project-id="${p.id}">${p.name}</button></div>${isR?`<div class="text-sm font-medium text-gray-500">Today: ${formatDuration(getTodaysTimeForProjectMs(p.id))}</div>`:''}</div></div><div class="flex items-center space-x-4"><div class="text-xl font-bold ${isR?'text-green-500 live-timer-display':'text-gray-400'} timer-display">${isR?formatTime(Date.now()-activeTimer.startTime):formatDuration(tTMs)}</div><button class="timer-control-btn ${isR?'stop-timer-btn bg-red-500':'start-timer-btn bg-gray-600'} text-white w-10 h-10 rounded-lg flex items-center justify-center"><svg fill="currentColor" class="w-6 h-6">${isR?'<path d="M6 6h12v12H6z"/>':'<path d="M8 5v14l11-7z"/>'}</svg></button></div></div>${expC}${p.estimate>0?`<div class="progress-bar-bg mt-4"><div class="progress-bar-fg" style="width:${Math.min(100,pgr)}%;background-color:${p.color};"></div></div>`:''}</div>`;}).join('');
+            
+            document.getElementById('dashboard-projects-list').innerHTML=sP.map(p=>{
+                const isR = activeTimer?.projectId === p.id;
+                const totalTimeOverallMs = getTotalTimeForProject(p.id);
+                const timeTodayMs = getTodaysTimeForProjectMs(p.id);
+                const pgr = p.estimate > 0 ? (totalTimeOverallMs / (p.estimate * 3600000)) * 100 : 0;
+                const dTsH = p.definedTasks?.length > 0 ? `<div class="flex flex-wrap gap-2 pt-4">${p.definedTasks.map(t=>`<button class="defined-task-btn text-xs font-semibold px-2 py-1 rounded-md bg-[var(--muted)] hover:bg-opacity-80">${t}</button>`).join('')}</div>`:'';
+                const expC = `<div class="expanded-content"><div>${dTsH}<div class="pt-4 space-y-3"><input type="text" placeholder="What are you working on?" class="task-description-input w-full p-2 rounded-md border border-[var(--input-border)] bg-[var(--input-bg)]" value="${isR ? activeTimer.description : ''}"><textarea placeholder="Notes..." class="task-notes-input w-full p-2 rounded-md border h-16 bg-[var(--input-bg)]">${isR ? activeTimer.notes : ''}</textarea><input type="text" placeholder="Add tags... (#meeting)" class="task-tags-input w-full p-2 rounded-md border bg-[var(--input-bg)]" value="${isR ? (activeTimer.tags || []).join(' ') : ''}"></div></div></div>`;
+                
+                return `<div class="project-card bg-[var(--card)] rounded-xl shadow-sm border border-[var(--border)] p-4 transition-all duration-300 relative ${isR ? 'is-running' : ''}" style="--project-color:${p.color};--project-color-glow:${p.color}40;" data-project-id="${p.id}">
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-start space-x-4 flex-grow min-w-0">
+                            <span class="w-4 h-4 rounded-full flex-shrink-0 mt-1.5" style="background-color:${p.color};"></span>
+                            <div class="flex-grow min-w-0">
+                                <button class="font-semibold project-name-link truncate text-left hover:underline text-lg" data-project-id="${p.id}">${p.name}</button>
+                                ${isR ? `<div class="text-sm font-medium text-gray-500">Total: ${formatDuration(totalTimeOverallMs)}</div>` : ''}
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <div class="text-xl font-bold ${isR ? 'text-green-500 live-timer-display' : 'text-gray-400'} timer-display">${isR ? formatTime(Date.now() - activeTimer.startTime) : formatDuration(timeTodayMs)}</div>
+                            <button class="timer-control-btn ${isR ? 'stop-timer-btn bg-red-500' : 'start-timer-btn bg-gray-600'} text-white w-10 h-10 rounded-lg flex items-center justify-center"><svg fill="currentColor" class="w-6 h-6">${isR ? '<path d="M6 6h12v12H6z"/>' : '<path d="M8 5v14l11-7z"/>'}</svg></button>
+                        </div>
+                    </div>
+                    ${expC}
+                    ${p.estimate > 0 ? `<div class="progress-bar-bg mt-4"><div class="progress-bar-fg" style="width:${Math.min(100, pgr)}%;background-color:${p.color};"></div></div>` : ''}
+                </div>`;
+            }).join('');
         };
         
         const renderReportsPage=(filter='week',range={})=>{const n=new Date();let sD,eD;if(filter==='day'){sD=new Date(n).setHours(0,0,0,0);eD=new Date(n).setHours(23,59,59,999);}else if(filter==='week'){const d=n.getDay()||7,f=n.getDate()-d+1;sD=new Date(new Date(n).setDate(f)).setHours(0,0,0,0);eD=new Date(new Date(n).setDate(f+6)).setHours(23,59,59,999);}else if(filter==='month'){sD=new Date(n.getFullYear(),n.getMonth(),1);eD=new Date(n.getFullYear(),n.getMonth()+1,0).setHours(23,59,59,999);}else if(filter==='custom'&&range.start&&range.end){sD=new Date(range.start).getTime();eD=new Date(range.end).setHours(23,59,59,999);}const fTs=tasks.filter(t=>t.startTime>=sD&&t.startTime<=eD);const tMs=fTs.reduce((s,t)=>s+(t.endTime-t.startTime),0);
