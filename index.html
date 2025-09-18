@@ -81,8 +81,21 @@
         .project-card.is-focused {
             z-index: 50;
         }
-        .markdown-preview > *:first-child { margin-top: 0; }
-        .markdown-preview > *:last-child { margin-bottom: 0; }
+        
+        body.focus-mode-active #desktop-nav,
+        body.focus-mode-active #add-project-btn-container,
+        body.focus-mode-active #sort-controls-container,
+        body.focus-mode-active #dashboard-footer-controls,
+        body.focus-mode-active footer {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+        .is-focused-header {
+            opacity: 1 !important;
+            pointer-events: auto !important;
+        }
+
 
     </style>
 </head>
@@ -90,34 +103,36 @@
     
     <div class="lg:flex">
         <!-- Desktop Sidebar Navigation -->
-        <nav id="desktop-nav" class="hidden lg:flex flex-col w-64 border-r border-[var(--border)] bg-[var(--card)] p-4 space-y-2 flex-shrink-0 h-screen sticky top-0">
+        <div class="hidden lg:flex flex-col w-64 border-r border-[var(--border)] bg-[var(--card)] p-4 flex-shrink-0 h-screen sticky top-0">
             <div class="flex items-center space-x-3 mb-8 px-2">
                 <div class="bg-black text-white w-8 h-8 flex items-center justify-center rounded-full flex-shrink-0">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
                 </div>
                 <div><h1 class="text-xl font-bold text-[var(--foreground)]">the work app</h1></div>
             </div>
-            <button data-page="page-tracker" class="nav-btn flex items-center space-x-4 p-3 rounded-lg text-left font-semibold text-[var(--foreground)]">
-                <i class="fa-solid fa-clock w-6 text-center text-xl"></i>
-                <span>Tracker</span>
-            </button>
-            <button data-page="page-tasks" class="nav-btn flex items-center space-x-4 p-3 rounded-lg text-left font-semibold text-[var(--foreground)]">
-                <i class="fa-solid fa-list-check w-6 text-center text-xl"></i>
-                <span>Tasks</span>
-            </button>
-            <button data-page="page-reports" class="nav-btn flex items-center space-x-4 p-3 rounded-lg text-left font-semibold text-[var(--foreground)]">
-                <i class="fa-solid fa-chart-simple w-6 text-center text-xl"></i>
-                <span>Reports</span>
-            </button>
-            <button data-page="page-accomplishments" class="nav-btn flex items-center space-x-4 p-3 rounded-lg text-left font-semibold text-[var(--foreground)]">
-               <i class="fa-solid fa-award w-6 text-center text-xl"></i>
-               <span>Accomplishments</span>
-            </button>
-            <button data-page="page-settings" class="nav-btn flex items-center space-x-4 p-3 rounded-lg text-left font-semibold text-[var(--foreground)]">
-               <i class="fa-solid fa-gear w-6 text-center text-xl"></i>
-               <span>Settings</span>
-            </button>
-        </nav>
+            <nav id="desktop-nav" class="flex-grow flex flex-col space-y-2">
+                <button data-page="page-tracker" class="nav-btn flex items-center space-x-4 p-3 rounded-lg text-left font-semibold text-[var(--foreground)]">
+                    <i class="fa-solid fa-clock w-6 text-center text-xl"></i>
+                    <span>Tracker</span>
+                </button>
+                <button data-page="page-tasks" class="nav-btn flex items-center space-x-4 p-3 rounded-lg text-left font-semibold text-[var(--foreground)]">
+                    <i class="fa-solid fa-list-check w-6 text-center text-xl"></i>
+                    <span>Tasks</span>
+                </button>
+                <button data-page="page-reports" class="nav-btn flex items-center space-x-4 p-3 rounded-lg text-left font-semibold text-[var(--foreground)]">
+                    <i class="fa-solid fa-chart-simple w-6 text-center text-xl"></i>
+                    <span>Reports</span>
+                </button>
+                <button data-page="page-accomplishments" class="nav-btn flex items-center space-x-4 p-3 rounded-lg text-left font-semibold text-[var(--foreground)]">
+                   <i class="fa-solid fa-award w-6 text-center text-xl"></i>
+                   <span>Accomplishments</span>
+                </button>
+                <button data-page="page-settings" class="nav-btn flex items-center space-x-4 p-3 rounded-lg text-left font-semibold text-[var(--foreground)]">
+                   <i class="fa-solid fa-gear w-6 text-center text-xl"></i>
+                   <span>Settings</span>
+                </button>
+            </nav>
+        </div>
 
         <!-- Main App Container -->
         <div id="app-container" class="flex-grow">
@@ -143,25 +158,29 @@
                                 <h1 class="text-2xl font-bold" style="color: var(--coral-dark);">Projects</h1>
                                 <p id="tracker-date-display" class="text-sm text-gray-400"></p>
                             </div>
-                             <button id="add-project-btn-dashboard" class="bg-[var(--coral)] text-white w-12 h-12 flex items-center justify-center rounded-full shadow-lg hover:bg-opacity-90 transition-transform transform hover:scale-105">
-                                <i class="fa-solid fa-plus text-xl"></i>
-                            </button>
-                        </div>
-                        <div class="flex flex-wrap items-center justify-between my-4 p-2 rounded-lg gap-4" style="background-color: var(--coral-light);">
-                            <div class="flex items-center space-x-2">
-                                <span class="text-sm font-semibold ml-2 sort-by-text">Sort:</span>
-                                <button data-sort="latest" class="sort-btn text-xs font-semibold px-3 py-1 rounded-full active">Recent</button>
-                                <button data-sort="name" class="sort-btn text-xs font-semibold px-3 py-1 rounded-full">Name</button>
-                                <button data-sort="time" data-dir="desc" class="sort-btn text-xs font-semibold px-3 py-1 rounded-full inline-flex items-center gap-1">Timer <span class="sort-arrow"></span></button>
+                            <div id="add-project-btn-container">
+                                 <button id="add-project-btn-dashboard" class="bg-[var(--coral)] text-white w-12 h-12 flex items-center justify-center rounded-full shadow-lg hover:bg-opacity-90 transition-transform transform hover:scale-105">
+                                    <i class="fa-solid fa-plus text-xl"></i>
+                                </button>
                             </div>
-                            <div class="text-sm text-right pr-2">
-                                <span class="font-medium text-[var(--foreground)]">Today:</span>
-                                <span id="dashboard-total-time" class="font-bold text-[var(--foreground)] timer-display"></span>
+                        </div>
+                        <div id="sort-controls-container">
+                            <div class="flex flex-wrap items-center justify-between my-4 p-2 rounded-lg gap-4" style="background-color: var(--coral-light);">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-sm font-semibold ml-2 sort-by-text">Sort by:</span>
+                                    <button data-sort="latest" class="sort-btn text-xs font-semibold px-3 py-1 rounded-full active">Recent</button>
+                                    <button data-sort="name" class="sort-btn text-xs font-semibold px-3 py-1 rounded-full">Name</button>
+                                    <button data-sort="time" data-dir="desc" class="sort-btn text-xs font-semibold px-3 py-1 rounded-full inline-flex items-center gap-1">Timer Amount <span class="sort-arrow"></span></button>
+                                </div>
+                                <div class="text-sm text-right pr-2">
+                                    <span class="font-medium text-[var(--foreground)]">Today:</span>
+                                    <span id="dashboard-total-time" class="font-bold text-[var(--foreground)] timer-display"></span>
+                                </div>
                             </div>
                         </div>
                         <section id="dashboard-section">
                             <div id="dashboard-projects-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-                             <div class="text-center mt-6">
+                             <div id="dashboard-footer-controls" class="text-center mt-6">
                                 <button id="view-completed-projects-btn" class="text-sm font-semibold text-gray-500 hover:underline">View Completed Projects</button>
                             </div>
                         </section>
@@ -222,8 +241,8 @@
                 <input type="number" id="new-project-estimate" step="0.1" min="0" class="w-full p-2 border rounded-md text-sm bg-[var(--input-bg)] text-[var(--foreground)] border-[var(--input-border)]" placeholder="e.g., 40">
             </div>
             <div class="flex justify-end gap-3 pt-4 border-t border-[var(--border)]">
-                <button type="button" id="cancel-add-project-btn" class="px-4 py-2 text-sm font-semibold rounded-lg hover:bg-[var(--muted)]">Cancel</button>
-                <button type="submit" id="save-project-btn" class="px-4 py-2 text-sm font-semibold text-white rounded-lg" style="background-color: var(--coral);">Save Project</button>
+                <button type="button" id="cancel-add-project-btn" class="px-5 py-2 text-base font-semibold rounded-lg hover:bg-[var(--muted)]">Cancel</button>
+                <button type="submit" id="save-project-btn" class="px-5 py-2 text-base font-semibold text-white rounded-lg" style="background-color: var(--coral);">Save Project</button>
             </div>
         </form>
     </div>
@@ -252,8 +271,8 @@
                 <input type="text" id="predefined-task-tags" class="w-full p-2 border rounded-md text-sm bg-[var(--input-bg)]">
             </div>
             <div class="flex justify-end gap-3 pt-4 border-t border-[var(--border)]">
-                <button type="button" id="cancel-add-predefined-task-btn" class="px-4 py-2 text-sm font-semibold rounded-lg hover:bg-[var(--muted)]">Cancel</button>
-                <button type="submit" class="px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg">Save Task</button>
+                <button type="button" id="cancel-add-predefined-task-btn" class="px-5 py-2 text-base font-semibold rounded-lg hover:bg-[var(--muted)]">Cancel</button>
+                <button type="submit" class="px-5 py-2 text-base font-semibold text-white bg-blue-600 rounded-lg">Save Task</button>
             </div>
         </form>
     </div>
@@ -278,8 +297,8 @@
                 <input type="text" id="accomplishment-tags" placeholder="Add tags... (#milestone)" class="w-full p-2 border border-[var(--input-border)] rounded-md text-sm bg-[var(--input-bg)] text-[var(--foreground)]">
             </div>
             <div class="flex justify-end gap-3 pt-4 border-t border-[var(--border)]">
-                <button type="button" id="cancel-add-accomplishment-btn" class="px-4 py-2 text-sm font-semibold rounded-lg hover:bg-[var(--muted)]">Cancel</button>
-                <button type="submit" class="w-full text-white font-semibold py-2 rounded-md" style="background-color: var(--coral);">Save</button>
+                <button type="button" id="cancel-add-accomplishment-btn" class="px-5 py-2 text-base font-semibold rounded-lg hover:bg-[var(--muted)]">Cancel</button>
+                <button type="submit" class="px-5 py-2 text-base w-full text-white font-semibold rounded-md" style="background-color: var(--coral);">Save</button>
             </div>
         </form>
     </div>
@@ -315,8 +334,8 @@
                 <textarea id="manual-entry-notes" rows="4" class="w-full p-2 border rounded-md text-sm bg-[var(--input-bg)]" placeholder="Add notes here..."></textarea>
             </div>
             <div class="flex justify-end gap-3 pt-4 border-t">
-                <button type="button" id="cancel-manual-entry-btn" class="px-4 py-2 text-sm font-semibold rounded-lg hover:bg-[var(--muted)]">Cancel</button>
-                <button type="submit" class="px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg">Save Entry</button>
+                <button type="button" id="cancel-manual-entry-btn" class="px-5 py-2 text-base font-semibold rounded-lg hover:bg-[var(--muted)]">Cancel</button>
+                <button type="submit" class="px-5 py-2 text-base font-semibold text-white bg-blue-600 rounded-lg">Save Entry</button>
             </div>
         </form>
     </div>
@@ -347,18 +366,23 @@
         <div id="predefined-tasks-list" class="space-y-4 mt-4"></div>
     </template>
     <template id="reports-page-template">
-         <div class="flex justify-between items-center mb-2">
+         <div class="flex flex-wrap justify-between items-center mb-2 gap-4">
             <div>
                  <h1 class="text-2xl font-bold" style="color:var(--coral-dark);">Reports</h1>
                  <p id="reports-date-display" class="text-sm text-gray-400"></p>
             </div>
             <button id="export-day-notes-btn" class="hidden bg-[var(--coral)] text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-md hover:bg-opacity-90">Export Day Notes</button>
         </div>
-         <div class="p-2 bg-[var(--muted)] rounded-xl flex text-center text-sm font-semibold my-4">
-            <button data-filter="day" class="reports-filter-btn flex-1 py-2 rounded-lg">Day</button>
-            <button data-filter="week" class="reports-filter-btn flex-1 py-2 rounded-lg bg-[var(--card)] shadow">Week</button>
-            <button data-filter="month" class="reports-filter-btn flex-1 py-2 rounded-lg">Month</button>
-            <button data-filter="custom" class="reports-filter-btn flex-1 py-2 rounded-lg">Custom</button>
+         <div class="flex flex-wrap items-center gap-4">
+            <div class="p-2 bg-[var(--muted)] rounded-xl flex text-center text-sm font-semibold my-4">
+                <button data-filter="day" class="reports-filter-btn flex-1 py-2 px-4 rounded-lg">Day</button>
+                <button data-filter="week" class="reports-filter-btn flex-1 py-2 px-4 rounded-lg bg-[var(--card)] shadow">Week</button>
+                <button data-filter="month" class="reports-filter-btn flex-1 py-2 px-4 rounded-lg">Month</button>
+                <button data-filter="custom" class="reports-filter-btn flex-1 py-2 px-4 rounded-lg">Custom</button>
+            </div>
+            <div id="reports-day-picker-container" class="hidden">
+                 <input type="date" id="reports-day-picker" class="w-full p-2 border rounded-md text-sm bg-[var(--input-bg)]">
+            </div>
         </div>
         <div id="reports-custom-range" class="hidden flex items-center gap-2 text-sm mb-4">
             <input type="date" id="reports-date-start" class="w-full p-2 border rounded-md text-sm bg-[var(--input-bg)]">
@@ -476,6 +500,7 @@
         const focusOnCard = (card) => {
             if (!card || isAnimating) return;
             isAnimating = true;
+            document.body.classList.add('focus-mode-active');
 
             const list = document.getElementById('dashboard-projects-list');
             const rect = card.getBoundingClientRect();
@@ -517,13 +542,7 @@
                     width: `${targetWidth}px`,
                     height: `${targetHeight}px`
                 });
-                setTimeout(() => {
-                    const notesInput = card.querySelector('.task-notes-input');
-                    if (notesInput) {
-                        notesInput.dispatchEvent(new Event('input', { bubbles: true }));
-                    }
-                    isAnimating = false;
-                }, 500);
+                setTimeout(() => { isAnimating = false; }, 500);
             });
         };
 
@@ -534,6 +553,7 @@
                     return;
                 }
                 isAnimating = true;
+                document.body.classList.remove('focus-mode-active');
                 const { card, placeholder } = focusedCardState;
                 const list = document.getElementById('dashboard-projects-list');
 
@@ -679,11 +699,18 @@
                 const timeTodayMs=getTodaysTimeForProjectMs(p.id);
                 const pgr=p.estimate>0?(totalTimeOverallMs/(p.estimate*3600000))*100:0;
                 
-                const expC=`<div class="expanded-content"><div><div class="pt-4 space-y-3 relative">
-                    <div class="relative"><input type="text" placeholder="What are you working on?" class="task-description-input w-full p-2 rounded-md border border-[var(--input-border)] bg-[var(--input-bg)]" value="${isR ? activeTimer.description : ''}"><div class="custom-task-dropdown hidden"></div></div>
-                    <textarea placeholder="Notes..." class="task-notes-input w-full p-2 rounded-md border h-24 bg-[var(--input-bg)]">${isR ? activeTimer.notes : ''}</textarea>
-                    <input type="text" placeholder="Add tags... (#meeting)" class="task-tags-input w-full p-2 rounded-md border bg-[var(--input-bg)]" value="${isR ? (activeTimer.tags || []).join(' ') : ''}">
-                </div></div></div>`;
+                const expC=`<div class="expanded-content">
+                    <div class="h-full">
+                        <div class="pt-4 flex flex-col h-full relative">
+                            <div class="relative mb-3 flex-shrink-0">
+                                <input type="text" placeholder="What are you working on?" class="task-description-input w-full p-2 rounded-md border border-[var(--input-border)] bg-[var(--input-bg)]" value="${isR ? activeTimer.description : ''}">
+                                <div class="custom-task-dropdown hidden"></div>
+                            </div>
+                            <textarea placeholder="Notes..." class="task-notes-input w-full p-2 rounded-md border bg-[var(--input-bg)] flex-grow resize-none">${isR ? activeTimer.notes : ''}</textarea>
+                            <input type="text" placeholder="Add tags... (#meeting)" class="task-tags-input w-full p-2 mt-3 rounded-md border bg-[var(--input-bg)] flex-shrink-0" value="${isR ? (activeTimer.tags || []).join(' ') : ''}">
+                        </div>
+                    </div>
+                </div>`;
                 
                 let liveDisplayTime="00:00:00";
                 if(isR){
@@ -758,32 +785,44 @@
             const content=document.getElementById('reports-page-template').content.cloneNode(true);
             document.getElementById('reports-content').innerHTML='';
             document.getElementById('reports-content').appendChild(content);
+
+            const dayPicker = document.getElementById('reports-day-picker');
+            dayPicker.value = new Date().toISOString().split('T')[0];
+            dayPicker.addEventListener('change', () => renderReportData('day'));
+
             renderReportData('week');
         };
 
         const renderReportData=(filter,range={})=>{
             const exportBtn = document.getElementById('export-day-notes-btn');
-            if(exportBtn) {
-                exportBtn.classList.toggle('hidden', filter !== 'day');
-            }
+            const dayPickerContainer = document.getElementById('reports-day-picker-container');
+            if(exportBtn) exportBtn.classList.toggle('hidden', filter !== 'day');
+            if(dayPickerContainer) dayPickerContainer.classList.toggle('hidden', filter !== 'day');
+            
             let sD,eD;const n=new Date();
             if(filter==='day'){
-                const dateDisplay = document.getElementById('reports-date-display').textContent;
-                const reportDate = dateDisplay ? new Date(dateDisplay.split(',').slice(1).join(',')) : n;
-                sD=new Date(reportDate).setHours(0,0,0,0);eD=new Date(reportDate).setHours(23,59,59,999);
-            }else if(filter==='week'){const d=n.getDay()===0?6:n.getDay()-1,f=n.getDate()-d;sD=new Date(new Date(n).setDate(f)).setHours(0,0,0,0);eD=new Date(new Date(n).setDate(f+6)).setHours(23,59,59,999);}else if(filter==='month'){sD=new Date(n.getFullYear(),n.getMonth(),1);eD=new Date(n.getFullYear(),n.getMonth()+1,0).setHours(23,59,59,999);}else if(filter==='custom'&&range.start&&range.end){sD=new Date(range.start).getTime();eD=new Date(range.end).setHours(23,59,59,999);}
+                const picker = document.getElementById('reports-day-picker');
+                const reportDate = picker ? new Date(picker.value + 'T00:00:00') : n;
+                sD=new Date(reportDate).setHours(0,0,0,0);
+                eD=new Date(reportDate).setHours(23,59,59,999);
+            }else if(filter==='week'){const d=n.getDay()===0?6:n.getDay()-1,f=n.getDate()-d;sD=new Date(new Date(n).setDate(f)).setHours(0,0,0,0);eD=new Date(new Date(n).setDate(f+6)).setHours(23,59,59,999);}else if(filter==='month'){sD=new Date(n.getFullYear(),n.getMonth(),1);eD=new Date(n.getFullYear(),n.getMonth()+1,0).setHours(23,59,59,999);}
+            else if(filter==='custom'&&range.start&&range.end){
+                sD=new Date(range.start + 'T00:00:00').getTime();
+                eD=new Date(range.end + 'T00:00:00').setHours(23,59,59,999);
+            }
             const fTs=tasks.filter(t=>t.startTime>=sD&&t.startTime<=eD);
             const groupedByProject=fTs.reduce((acc,task)=>{(acc[task.projectId]=acc[task.projectId]||[]).push(task);return acc;},{});
             const summaryEl=document.getElementById('reports-summary');if(!summaryEl)return;summaryEl.innerHTML=projects.filter(p=>groupedByProject[p.id]).map(p=>{const projectTasks=groupedByProject[p.id];const totalTime=projectTasks.reduce((sum,t)=>sum+(t.endTime-t.startTime),0);return`<details class="bg-[var(--card)] p-3 rounded-lg border"><summary class="font-semibold flex justify-between items-center cursor-pointer"><span>${p.name}</span><span style="color:${p.color};">${formatDuration(totalTime)}</span></summary><div class="mt-3 pt-3 border-t space-y-2">${projectTasks.sort((a,b)=>b.startTime-a.startTime).map(t=>`<div class="text-sm flex justify-between"><span>${t.description}</span><span class="text-[var(--muted-foreground)]">${formatDuration(t.endTime-t.startTime)}</span></div>`).join('')}</div></details>`;}).join('')||'<p class="text-center text-[var(--muted-foreground)] py-8 col-span-full">No time tracked in this period.</p>';
         };
         
         const exportDayNotesAsMarkdown = () => {
-            const dateStr = document.getElementById('reports-date-display').textContent.split(',').slice(1).join(',').trim();
-            if (!dateStr) {
-                alert("Could not determine the date for export.");
+            const dayPicker = document.getElementById('reports-day-picker');
+            if (!dayPicker || !dayPicker.value) {
+                alert("Please select a day to export.");
                 return;
             }
-            const reportDate = new Date(dateStr);
+            
+            const reportDate = new Date(dayPicker.value + 'T00:00:00');
             reportDate.setHours(0,0,0,0);
             const startOfDay = reportDate.getTime();
             const endOfDay = startOfDay + (24 * 60 * 60 * 1000 - 1);
@@ -835,9 +874,9 @@
         const savePredefinedTask=async e=>{e.preventDefault();const modal=document.getElementById('add-predefined-task-modal');const id=modal.querySelector('#predefined-task-id').value;const description=modal.querySelector('#predefined-task-desc').value.trim();if(!description)return;const projectId=parseInt(modal.querySelector('#predefined-task-project').value)||null;const notes=modal.querySelector('#predefined-task-notes').value.trim();const tags=modal.querySelector('#predefined-task-tags').value.split(',').map(t=>t.trim()).filter(Boolean);const dueDate=modal.querySelector('#predefined-task-due-date').value;const taskData={description,projectId,notes,tags,dueDate:dueDate||null};if(id){const task=predefinedTasks.find(t=>t.id===parseInt(id));Object.assign(task,taskData);await updateData('predefinedTasks',task);}else{const newId=await addData('predefinedTasks',{...taskData,isCompleted:false,completedDate:null});taskData.id=newId;predefinedTasks.push(taskData);}closeModal(modal);renderTasksPage();};
         
         const renderCompletedProjectsPage=()=>{const completedProjects=projects.filter(p=>p.status==='completed');const contentEl=document.getElementById('completed-projects-content');contentEl.innerHTML=`<div class="flex items-center justify-between mb-6"><h1 class="text-2xl font-bold">Completed Projects</h1><button class="back-to-dashboard-btn font-semibold text-blue-600 hover:underline">Back to Dashboard</button></div><div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">${completedProjects.length>0?completedProjects.map(p=>`<div class="bg-[var(--card)] p-3 rounded-lg border flex items-center justify-between"><div class="flex items-center space-x-3"><span class="w-3 h-3 rounded-full" style="background-color:${p.color};"></span><button class="font-semibold completed-project-link hover:underline" data-project-id="${p.id}">${p.name}</button></div></div>`).join(''):'<p class="text-center text-[var(--muted-foreground)] py-8 col-span-full">No completed projects.</p>'}</div>`;};
-        const openProjectDetailView=(id)=>{navigateTo('page-detail');currentDetailProjectId=id;const p=projects.find(p=>p.id===id);if(!p)return;const projectTasks=predefinedTasks.filter(t=>t.projectId===id);const tasksHTML=`<div class="mt-6"><h2 class="font-semibold mb-2">Task List</h2><div class="space-y-2">${projectTasks.length>0?projectTasks.map(t=>`<div class="bg-[var(--card)] p-2 rounded-lg border text-sm">${t.description}</div>`).join(''):'<p class="text-sm text-[var(--muted-foreground)]">No tasks defined for this project yet.</p>'}</div></div>`;const statusRadios=`<div class="flex items-center gap-6 mt-4"><p class="text-sm font-medium text-[var(--muted-foreground)]">Project Status:</p><div class="flex items-center gap-4"><label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="project-status" value="open" class="project-status-radio" ${p.status!=='completed'?'checked':''}> Open</label><label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="project-status" value="completed" class="project-status-radio" ${p.status==='completed'?'checked':''}> Completed</label></div></div>`;document.getElementById('detail-view-content').innerHTML=`<div id="project-detail-view-mode"><header class="flex items-start justify-between mb-2"><div><h1 class="text-2xl font-bold" style="color:${p.color};">${p.name}</h1></div><div class="flex items-center gap-2"><button id="edit-project-btn" class="p-2 rounded-md hover:bg-[var(--muted)]"><i class="fa-solid fa-pencil text-xl"></i></button></div></header><p class="text-sm text-[var(--muted-foreground)] mb-4">${p.description||'No description.'}</p><button id="add-manual-entry-btn" class="w-full text-center py-2 px-4 rounded-lg font-semibold border border-[var(--input-border)] hover:bg-[var(--muted)]">Add Time</button>${statusRadios}</div><div id="project-detail-edit-mode" class="hidden mt-6 mb-6 space-y-3 p-4 bg-[var(--muted)] rounded-lg"><div class="flex gap-4"><input type="text" id="edit-project-name" class="w-full p-2 text-xl font-bold border rounded-md bg-[var(--input-bg)]" value="${p.name}"><div id="edit-color-palette" class="flex flex-wrap gap-2"></div><input type="hidden" id="edit-project-color" value="${p.color}"></div><textarea id="edit-project-description" rows="2" class="w-full p-2 text-sm border rounded-md bg-[var(--input-bg)]">${p.description||''}</textarea><div class="grid grid-cols-2 gap-4"><input type="number" id="edit-project-estimate" placeholder="Estimate (hrs)" value="${p.estimate||''}" class="w-full p-2 border rounded-md text-sm bg-[var(--input-bg)]"></div><div class="flex justify-end gap-2"><button id="cancel-edit-project-btn" class="font-semibold px-4 py-2 rounded-lg hover:bg-gray-300">Cancel</button><button id="save-updated-project-btn" class="font-semibold px-4 py-2 rounded-lg bg-[var(--primary)] text-[var(--primary-foreground)]">Save</button></div></div><div class="mb-6 p-4 bg-[var(--card)] rounded-xl border mt-6"><p class="text-sm text-[var(--muted-foreground)]">Total Time for Period</p><p id="detail-total-time" class="text-3xl font-bold">0h 0m</p></div><div id="detail-date-filters" class="p-2 bg-[var(--muted)] rounded-xl flex text-center text-sm font-semibold my-4"><button data-filter="today" class="detail-filter-btn flex-1 py-2 rounded-lg bg-[var(--card)] shadow">Today</button><button data-filter="week" class="detail-filter-btn flex-1 py-2 rounded-lg">Week</button><button data-filter="month" class="detail-filter-btn flex-1 py-2 rounded-lg">Month</button><button data-filter="custom" class="detail-filter-btn flex-1 py-2 rounded-lg">Custom</button></div><div id="detail-custom-range" class="hidden flex items-center gap-2 text-sm mb-4"><input type="date" id="detail-date-start" class="w-full p-2 border rounded-md text-sm bg-[var(--input-bg)]"><span class="text-[var(--muted-foreground)]">to</span><input type="date" id="detail-date-end" class="w-full p-2 border rounded-md text-sm bg-[var(--input-bg)]"></div><div id="detail-entries-list" class="space-y-3"></div>${tasksHTML}`;renderProjectEntries(id,'today');};
+        const openProjectDetailView=(id)=>{navigateTo('page-detail');currentDetailProjectId=id;const p=projects.find(p=>p.id===id);if(!p)return;const projectTasks=predefinedTasks.filter(t=>t.projectId===id);const tasksHTML=`<div class="mt-6"><h2 class="font-semibold mb-2">Task List</h2><div class="space-y-2">${projectTasks.length>0?projectTasks.map(t=>`<div class="bg-[var(--card)] p-2 rounded-lg border text-sm">${t.description}</div>`).join(''):'<p class="text-sm text-[var(--muted-foreground)]">No tasks defined for this project yet.</p>'}</div></div>`;const statusRadios=`<div class="flex items-center gap-6 mt-4"><p class="text-sm font-medium text-[var(--muted-foreground)]">Project Status:</p><div class="flex items-center gap-4"><label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="project-status" value="open" class="project-status-radio" ${p.status!=='completed'?'checked':''}> Open</label><label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="project-status" value="completed" class="project-status-radio" ${p.status==='completed'?'checked':''}> Completed</label></div></div>`;document.getElementById('detail-view-content').innerHTML=`<div id="project-detail-view-mode"><header class="flex items-start justify-between mb-2"><div><h1 class="text-2xl font-bold" style="color:${p.color};">${p.name}</h1></div><div class="flex items-center gap-2"><button id="edit-project-btn" class="p-2 rounded-md hover:bg-[var(--muted)]"><i class="fa-solid fa-pencil text-xl"></i></button></div></header><p class="text-sm text-[var(--muted-foreground)] mb-4">${p.description||'No description.'}</p><button id="add-manual-entry-btn" class="w-full text-center py-2 px-4 rounded-lg font-semibold border border-[var(--input-border)] hover:bg-[var(--muted)]">Add Time</button>${statusRadios}</div><div id="project-detail-edit-mode" class="hidden mt-6 mb-6 space-y-3 p-4 bg-[var(--muted)] rounded-lg"><div class="flex gap-4"><input type="text" id="edit-project-name" class="w-full p-2 text-xl font-bold border rounded-md bg-[var(--input-bg)]" value="${p.name}"><div id="edit-color-palette" class="flex flex-wrap gap-2"></div><input type="hidden" id="edit-project-color" value="${p.color}"></div><textarea id="edit-project-description" rows="2" class="w-full p-2 text-sm border rounded-md bg-[var(--input-bg)]">${p.description||''}</textarea><div class="grid grid-cols-2 gap-4"><input type="number" id="edit-project-estimate" placeholder="Estimate (hrs)" value="${p.estimate||''}" class="w-full p-2 border rounded-md text-sm bg-[var(--input-bg)]"></div><div class="flex justify-end gap-2"><button id="cancel-edit-project-btn" class="font-semibold px-5 py-2 text-base rounded-lg hover:bg-gray-300">Cancel</button><button id="save-updated-project-btn" class="font-semibold px-5 py-2 text-base rounded-lg bg-[var(--primary)] text-[var(--primary-foreground)]">Save</button></div></div><div class="mb-6 p-4 bg-[var(--card)] rounded-xl border mt-6"><p class="text-sm text-[var(--muted-foreground)]">Total Time for Period</p><p id="detail-total-time" class="text-3xl font-bold">0h 0m</p></div><div id="detail-date-filters" class="p-2 bg-[var(--muted)] rounded-xl flex text-center text-sm font-semibold my-4"><button data-filter="today" class="detail-filter-btn flex-1 py-2 rounded-lg bg-[var(--card)] shadow">Today</button><button data-filter="week" class="detail-filter-btn flex-1 py-2 rounded-lg">Week</button><button data-filter="month" class="detail-filter-btn flex-1 py-2 rounded-lg">Month</button><button data-filter="custom" class="detail-filter-btn flex-1 py-2 rounded-lg">Custom</button></div><div id="detail-custom-range" class="hidden flex items-center gap-2 text-sm mb-4"><input type="date" id="detail-date-start" class="w-full p-2 border rounded-md text-sm bg-[var(--input-bg)]"><span class="text-[var(--muted-foreground)]">to</span><input type="date" id="detail-date-end" class="w-full p-2 border rounded-md text-sm bg-[var(--input-bg)]"></div><div id="detail-entries-list" class="space-y-3"></div>${tasksHTML}`;renderProjectEntries(id,'today');};
         const renderProjectEntries=(id,filter,range={})=>{let sD,eD;const n=new Date();if(filter==='today'){sD=new Date().setHours(0,0,0,0);eD=new Date().setHours(23,59,59,999);}else if(filter==='week'){const d=n.getDay()===0?6:n.getDay()-1,f=n.getDate()-d;sD=new Date(new Date(n).setDate(f)).setHours(0,0,0,0);eD=new Date(new Date(n).setDate(f+6)).setHours(23,59,59,999);}else if(filter==='month'){sD=new Date(n.getFullYear(),n.getMonth(),1);eD=new Date(n.getFullYear(),n.getMonth()+1,0).setHours(23,59,59,999);}else if(filter==='range'&&range.start&&range.end){sD=new Date(range.start).getTime();eD=new Date(range.end).setHours(23,59,59,999);}const fTs=tasks.filter(t=>t.projectId===id&&t.startTime>=sD&&t.startTime<=eD).sort((a,b)=>b.startTime-a.startTime);const tMs=fTs.reduce((s,t)=>s+(t.endTime-t.startTime),0);const tEl=document.getElementById('detail-total-time');if(tEl)tEl.textContent=formatDuration(tMs);const lEl=document.getElementById('detail-entries-list');if(lEl)lEl.innerHTML=fTs.length>0?fTs.map(t=>createTaskEntryHTML(t,projects.find(p=>p.id===t.projectId))).join(''):`<p class="text-center p-4">No entries.</p>`;};
-        const createTaskEntryHTML=(t,p)=>{const sT=new Date(t.startTime),eT=new Date(t.endTime);const dur=formatDuration(t.endTime-t.startTime);const dStr=sT.toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'});const tStr=`${sT.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})} - ${eT.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`;return`<div class="task-entry bg-[var(--card)] p-3 rounded-lg border" data-task-id="${t.id}"><div class="view-mode"><div class="flex justify-between items-start"><div class="flex-grow"><p class="font-semibold">${t.description}</p><p class="text-sm text-[var(--muted-foreground)] whitespace-pre-wrap">${t.notes||'No notes'}</p><div class="text-sm text-[var(--muted-foreground)] mt-2">${dStr} &bull; ${tStr}</div></div><div class="flex items-center gap-1 ml-2 flex-shrink-0"><span class="font-semibold text-base mr-2">${dur}</span><button class="edit-task-btn p-2 rounded-md hover:bg-[var(--muted)]"><i class="fa-solid fa-pencil"></i></button><button class="delete-task-btn p-2 rounded-md hover:bg-[var(--muted)]"><i class="fa-solid fa-trash-can"></i></button></div></div></div><div class="edit-mode hidden space-y-2 mt-2"><input class="w-full p-2 text-sm border rounded-md bg-[var(--input-bg)] edit-task-description" value="${t.description}"><textarea class="w-full p-2 text-sm border rounded-md h-20 bg-[var(--input-bg)] edit-task-notes">${t.notes||''}</textarea><input type="text" placeholder="Add tags..." class="w-full p-2 text-sm border rounded-md bg-[var(--input-bg)]" value="${(t.tags||[]).join(' ')}"><div class="flex items-center gap-2"><input type="date" class="w-full p-1 text-xs border rounded-md bg-[var(--input-bg)]" value="${sT.toISOString().split('T')[0]}"><input type="time" class="w-full p-1 text-xs border" value="${sT.toTimeString().slice(0,5)}"><input type="time" class="w-full p-1 text-xs border" value="${eT.toTimeString().slice(0,5)}"></div><div class="flex justify-end gap-2"><button class="cancel-edit-btn px-3 py-1 text-xs bg-gray-200 rounded-md">Cancel</button><button class="save-task-btn px-3 py-1 text-xs text-white bg-blue-600 rounded-md">Save</button></div></div></div>`;};
+        const createTaskEntryHTML=(t,p)=>{const sT=new Date(t.startTime),eT=new Date(t.endTime);const dur=formatDuration(t.endTime-t.startTime);const dStr=sT.toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'});const tStr=`${sT.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})} - ${eT.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`;return`<div class="task-entry bg-[var(--card)] p-3 rounded-lg border" data-task-id="${t.id}"><div class="view-mode"><div class="flex justify-between items-start"><div class="flex-grow"><p class="font-semibold">${t.description}</p><p class="text-sm text-[var(--muted-foreground)] whitespace-pre-wrap">${t.notes||'No notes'}</p><div class="text-sm text-[var(--muted-foreground)] mt-2">${dStr} &bull; ${tStr}</div></div><div class="flex items-center gap-1 ml-2 flex-shrink-0"><span class="font-semibold text-base mr-2">${dur}</span><button class="edit-task-btn p-2 rounded-md hover:bg-[var(--muted)]"><i class="fa-solid fa-pencil"></i></button><button class="delete-task-btn p-2 rounded-md hover:bg-[var(--muted)]"><i class="fa-solid fa-trash-can"></i></button></div></div></div><div class="edit-mode hidden space-y-2 mt-2"><input class="w-full p-2 text-sm border rounded-md bg-[var(--input-bg)] edit-task-description" value="${t.description}"><textarea class="w-full p-2 text-sm border rounded-md h-20 bg-[var(--input-bg)] edit-task-notes">${t.notes||''}</textarea><input type="text" placeholder="Add tags..." class="w-full p-2 text-sm border rounded-md bg-[var(--input-bg)]" value="${(t.tags||[]).join(' ')}"><div class="flex items-center gap-2"><input type="date" class="w-full p-1 text-xs border rounded-md bg-[var(--input-bg)]" value="${sT.toISOString().split('T')[0]}"><input type="time" class="w-full p-1 text-xs border" value="${sT.toTimeString().slice(0,5)}"><input type="time" class="w-full p-1 text-xs border" value="${eT.toTimeString().slice(0,5)}"></div><div class="flex justify-end gap-2"><button class="cancel-edit-btn px-4 py-2 text-sm rounded-md">Cancel</button><button class="save-task-btn px-4 py-2 text-sm text-white bg-blue-600 rounded-md">Save</button></div></div></div>`;};
         const saveManualEntry=async e=>{e.preventDefault();const desc=document.getElementById('manual-entry-desc').value,date=document.getElementById('manual-entry-date').value,start=document.getElementById('manual-entry-start').value,end=document.getElementById('manual-entry-end').value,notes=document.getElementById('manual-entry-notes').value;if(!desc||!date||!start||!end)return;const startTime=new Date(`${date}T${start}`).getTime(),endTime=new Date(`${date}T${end}`).getTime();if(startTime>=endTime)return;const newTask={projectId:currentDetailProjectId,description:desc,notes,startTime,endTime,tags:[]};const newId=await addData('tasks',newTask);newTask.id=newId;tasks.push(newTask);closeModal(document.getElementById('manual-entry-modal'));const cF=document.querySelector('#detail-date-filters .detail-filter-btn.active').dataset.filter;renderProjectEntries(currentDetailProjectId,cF);updateDashboardTotalTime();renderDashboardProjects();};
         const showUserGuide=()=>{document.getElementById('guide-content').innerHTML=`<h2 class="text-2xl font-bold mb-4">Welcome to the work app!</h2><div class="prose dark:prose-invert max-w-none space-y-4 text-[var(--foreground)]"><p>This guide explains the features to help you track time effectively.</p><h3 class="font-semibold">1. Creating a Project</h3><p>Use the '+' button on the main screen to create a new project. You can add a name, description, color, and an optional time estimate.</p><h3 class="font-semibold">2. Tasks</h3><p>Go to the Tasks page (clipboard icon) to create reusable tasks for your projects. This saves you from typing the same task name repeatedly.</p><h3 class="font-semibold">3. Tracking Time</h3><ul><li>Click the play button on a project card to start the timer.</li><li>You can select a task or type a new one.</li><li>Use the pause button to take a break without creating a new time entry.</li><li>Click the stop button to end and save the time entry.</li></ul><h3 class="font-semibold">4. PWA & Automatic Backups</h3><ul><li><strong>Installable App (PWA):</strong> Your browser may show an option to "Install" or "Add to Home Screen" to use this app like a native app.</li><li><strong>Automatic Backups:</strong> In <strong>Settings</strong>, enable "Automatic Daily Backups" to save a JSON backup to your downloads folder every day after 12:00 PM.</li></ul></div>`;openModal(document.getElementById('guide-modal'));};
         
@@ -861,7 +900,7 @@
             if(e.target.closest('#cancel-manual-entry-btn'))closeModal(document.getElementById('manual-entry-modal'));if(e.target.closest('#edit-project-btn')){detailView.querySelector('#project-detail-view-mode').classList.add('hidden');detailView.querySelector('#project-detail-edit-mode').classList.remove('hidden');const p=projects.find(proj=>proj.id===currentDetailProjectId);const palette=detailView.querySelector('#edit-color-palette');palette.innerHTML=PALETTE.map(c=>`<div class="color-swatch ${p.color===c?'selected':''}" style="background-color: ${c}" data-color="${c}"></div>`).join('');}
             if(e.target.closest('#edit-color-palette .color-swatch')){detailView.querySelectorAll('#edit-color-palette .color-swatch').forEach(el=>el.classList.remove('selected'));e.target.classList.add('selected');detailView.querySelector('#edit-project-color').value=e.target.dataset.color;}
             if(e.target.closest('#cancel-edit-project-btn')){detailView.querySelector('#project-detail-view-mode').classList.remove('hidden');detailView.querySelector('#project-detail-edit-mode').classList.add('hidden');}
-            if(e.target.closest('#save-updated-project-btn')){const data={name:detailView.querySelector('#edit-project-name').value,description:detailView.querySelector('#edit-project-description').value,color:detailView.querySelector('#edit-project-color').value,estimate:parseFloat(detailView.querySelector('#edit-project-estimate').value)||0,};await updateProject(currentDetailProjectId,data);}
+            if(e.target.closest('#save-updated-project-btn')){const data={name:detailView.querySelector('#edit-project-name').value,description:detailView.querySelector('#edit-project-description').value,color:detailView.querySelector('#edit-project-color').value,estimate:parseFloat(detailView.querySelector('#edit-project-estimate').value)||0,};await updateProject(currentDetailProjectId,data);detailView.querySelector('#project-detail-view-mode').classList.remove('hidden');detailView.querySelector('#project-detail-edit-mode').classList.add('hidden');}
             if(e.target.closest('#detail-date-filters .detail-filter-btn')){const btn=e.target.closest('.detail-filter-btn');detailView.querySelectorAll('#detail-date-filters .detail-filter-btn').forEach(b=>b.classList.remove('bg-[var(--card)]','shadow'));btn.classList.add('bg-[var(--card)]','shadow');detailView.querySelector('#detail-custom-range').classList.toggle('hidden',btn.dataset.filter!=='custom');renderProjectEntries(currentDetailProjectId,btn.dataset.filter);}
             const entryEl=e.target.closest('.task-entry');if(entryEl){const tId=parseInt(entryEl.dataset.taskId);if(e.target.closest('.delete-task-btn')){if(confirm('Delete entry?')){await deleteData('tasks',tId);tasks=tasks.filter(t=>t.id!==tId);renderProjectEntries(currentDetailProjectId,document.querySelector('#detail-date-filters .detail-filter-btn.active').dataset.filter);updateDashboardTotalTime();renderDashboardProjects();}}
             else if(e.target.closest('.edit-task-btn')){entryEl.querySelector('.view-mode').classList.add('hidden');entryEl.querySelector('.edit-mode').classList.remove('hidden');const notesInput=entryEl.querySelector('.edit-task-notes');if(notesInput){notesInput.dispatchEvent(new Event('input',{bubbles:true}));}}
