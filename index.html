@@ -34,7 +34,7 @@
             body { padding-bottom: 0; }
         }
         .timer-display { font-variant-numeric: tabular-nums; }
-        .expanded-content { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.4s ease-in-out; } .expanded-content > div { overflow: hidden; } .project-card.is-running .expanded-content { grid-template-rows: 1fr; }
+        .expanded-content { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.4s ease-in-out; } .expanded-content > div { overflow: hidden; } .project-card.is-focused .expanded-content { grid-template-rows: 1fr; }
         .page { display: none; } .page.active { display: block; }
         #bottom-nav button.active { background-color: var(--coral-light); }
         #desktop-nav button.active { background-color: var(--coral-light); }
@@ -76,7 +76,9 @@
             position: relative;
             z-index: 1;
             transition: transform 0.4s cubic-bezier(0.645, 0.045, 0.355, 1), 
-                        opacity 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
+                        opacity 0.4s cubic-bezier(0.645, 0.045, 0.355, 1),
+                        height 0.4s cubic-bezier(0.645, 0.045, 0.355, 1),
+                        width 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
         }
         .project-card.is-focused {
             z-index: 50;
@@ -102,7 +104,7 @@
         <div class="hidden lg:flex flex-col w-64 border-r border-[var(--border)] bg-[var(--card)] p-4 flex-shrink-0 h-screen sticky top-0">
             <div class="flex items-center space-x-3 mb-8 px-2">
                 <div class="bg-black text-white w-8 h-8 flex items-center justify-center rounded-full flex-shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gem"><path d="M6 3h12l4 6-10 13L2 9Z"></path><path d="M12 22V9"></path><path d="m3.5 8.5 17 0"></path><path d="m8.5 3.5 7 5.5"></path><path d="m15.5 3.5-7 5.5"></path></svg>
                 </div>
                 <div><h1 class="text-xl font-bold text-[var(--foreground)]">time</h1></div>
             </div>
@@ -138,7 +140,7 @@
                      <div class="flex justify-between items-center">
                         <div class="flex items-center space-x-3">
                             <div class="bg-black text-white w-8 h-8 flex items-center justify-center rounded-full">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gem"><path d="M6 3h12l4 6-10 13L2 9Z"></path><path d="M12 22V9"></path><path d="m3.5 8.5 17 0"></path><path d="m8.5 3.5 7 5.5"></path><path d="m15.5 3.5-7 5.5"></path></svg>
                             </div>
                             <div><h1 class="text-xl font-bold text-[var(--foreground)]">time</h1></div>
                         </div>
@@ -756,12 +758,12 @@
                                 <div class="flex-grow min-w-0 mr-4">
                                     <button class="font-semibold project-name-link text-2xl text-left hover:underline truncate" data-project-id="${p.id}">${p.name}</button>
                                 </div>
-                                <div class="flex items-center space-x-4 flex-shrink-0">
+                                <div class="flex items-center space-x-3 flex-shrink-0">
                                     <div class="text-xl font-bold timer-display">${formatDuration(timeTodayMs)}</div>
-                                    <div class="flex items-center">${timerControls}</div>
+                                    <div class="h-10 flex items-center">${timerControls}</div>
                                 </div>
                             </div>
-                            ${p.estimate > 0 ? `<div class="mt-4">${progressBarHTML}</div>` : ''}
+                            ${p.estimate > 0 ? `<div class="mt-2">${progressBarHTML}</div>` : ''}
                         </div>
                     `;
                 }
@@ -778,7 +780,9 @@
             document.getElementById('reports-content').appendChild(content);
 
             const dayPicker = document.getElementById('reports-day-picker');
-            dayPicker.value = new Date().toISOString().split('T')[0];
+            const today = new Date();
+            today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+            dayPicker.value = today.toISOString().slice(0, 10);
             dayPicker.addEventListener('change', () => renderReportData('day'));
 
             renderReportData('week');
@@ -810,7 +814,7 @@
             }
 
             const groupedByProject=fTs.reduce((acc,task)=>{(acc[task.projectId]=acc[task.projectId]||[]).push(task);return acc;},{});
-            const summaryEl=document.getElementById('reports-summary');if(!summaryEl)return;summaryEl.innerHTML=projects.filter(p=>groupedByProject[p.id]).map(p=>{const projectTasks=groupedByProject[p.id];const totalTime=projectTasks.reduce((sum,t)=>sum+(t.endTime-t.startTime),0);return`<details class="bg-[var(--card)] p-3 rounded-lg border"><summary class="font-semibold flex justify-between items-center cursor-pointer"><span><span class="inline-block w-3 h-3 rounded-full mr-2" style="background-color:${p.color};"></span>${p.name}</span><span>${formatDuration(totalTime)}</span></summary><div class="mt-3 pt-3 border-t space-y-2">${projectTasks.sort((a,b)=>b.startTime-a.startTime).map(t=>`<div class="text-sm flex justify-between"><span>${t.description}</span><span class="text-[var(--muted-foreground)]">${formatDuration(t.endTime-t.startTime)}</span></div>`).join('')}</div></details>`;}).join('')||'<p class="text-center text-[var(--muted-foreground)] py-8 col-span-full">No time tracked in this period.</p>';
+            const summaryEl=document.getElementById('reports-summary');if(!summaryEl)return;summaryEl.innerHTML=projects.filter(p=>groupedByProject[p.id]).map(p=>{const projectTasks=groupedByProject[p.id];const totalTime=projectTasks.reduce((sum,t)=>sum+(t.endTime-t.startTime),0);return`<details class="bg-[var(--card)] p-3 rounded-lg border"><summary class="font-semibold flex justify-between items-center cursor-pointer"><span><span class="inline-block w-3 h-3 rounded-full mr-2" style="background-color:${p.color};"></span>${p.name}</span><span>${formatDuration(totalTime)}</span></summary><div class="mt-3 pt-3 border-t space-y-2">${projectTasks.sort((a,b)=>b.startTime-a.startTime).map(t => createTaskEntryHTML(t,p)).join('')}</div></details>`;}).join('')||'<p class="text-center text-[var(--muted-foreground)] py-8 col-span-full">No time tracked in this period.</p>';
         };
         
         const exportDayNotesAsMarkdown = () => {
@@ -903,7 +907,7 @@
             const entryEl=e.target.closest('.task-entry');if(entryEl){const tId=parseInt(entryEl.dataset.taskId);if(e.target.closest('.delete-task-btn')){if(confirm('Delete entry?')){await deleteData('tasks',tId);tasks=tasks.filter(t=>t.id!==tId);renderProjectEntries(currentDetailProjectId,document.querySelector('#detail-date-filters .detail-filter-btn.active').dataset.filter);updateDashboardTotalTime();renderDashboardProjects();}}
             else if(e.target.closest('.edit-task-btn')){entryEl.querySelector('.view-mode').classList.add('hidden');entryEl.querySelector('.edit-mode').classList.remove('hidden');const notesInput=entryEl.querySelector('.edit-task-notes');if(notesInput){notesInput.dispatchEvent(new Event('input',{bubbles:true}));}}
             else if(e.target.closest('.cancel-edit-btn')){entryEl.querySelector('.view-mode').classList.remove('hidden');entryEl.querySelector('.edit-mode').classList.add('hidden');}
-            else if(e.target.closest('.save-task-btn')){const t=tasks.find(t=>t.id===tId);if(!t)return;const i=entryEl.querySelectorAll('.edit-mode input, .edit-mode textarea');t.description=i[0].value;t.notes=i[1].value;t.tags=i[2].value.trim().split(/[\s,]+/).filter(Boolean);const nD=i[3].value;t.startTime=new Date(`${nD}T${i[4].value}`).getTime();t.endTime=new Date(`${nD}T${i[5].value}`).getTime();await updateData('tasks',t);entryEl.querySelector('.view-mode').classList.remove('hidden');entryEl.querySelector('.edit-mode').classList.add('hidden');renderProjectEntries(currentDetailProjectId,document.querySelector('#detail-date-filters .detail-filter-btn.active').dataset.filter);updateDashboardTotalTime();renderDashboardProjects();}}}
+            else if(e.target.closest('.save-task-btn')){const t=tasks.find(t=>t.id===tId);if(!t)return;const i=entryEl.querySelectorAll('.edit-mode input, .edit-mode textarea');t.description=i[0].value;t.notes=i[1].value;t.tags=i[2].value.trim().split(/[\s,]+/).filter(Boolean);const nD=i[3].value;t.startTime=new Date(`${nD}T${i[4].value}`).getTime();t.endTime=new Date(`${nD}T${i[5].value}`).getTime();await updateData('tasks',t);entryEl.querySelector('.view-mode').classList.remove('hidden');entryEl.querySelector('.edit-mode').classList.add('hidden');if(entryEl.closest('#detail-view-content')){renderProjectEntries(currentDetailProjectId,document.querySelector('#detail-date-filters .detail-filter-btn.active').dataset.filter);}else if(entryEl.closest('#reports-content')){const activeFilterBtn=document.querySelector('#reports-content .reports-filter-btn.bg-\\[var\\(--card\\)\\]');if(activeFilterBtn)renderReportData(activeFilterBtn.dataset.filter);}updateDashboardTotalTime();renderDashboardProjects();}}}
             const completedProjectsView=e.target.closest('#page-completed-projects');if(completedProjectsView){if(e.target.closest('.back-to-dashboard-btn'))navigateTo('page-tracker');if(e.target.closest('.completed-project-link')){const pId=parseInt(e.target.closest('.completed-project-link').dataset.projectId);openProjectDetailView(pId);}}});
         
         document.getElementById('add-project-form').addEventListener('submit',saveNewProject);
