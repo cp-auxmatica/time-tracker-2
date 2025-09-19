@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>the work app</title>
+    <title>time</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#030213">
     
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⏱️</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕰️</text></svg>">
     <script src="https://cdn.tailwindcss.com/3.4.1?plugins=typography"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,7 +53,7 @@
         .dark footer { background-color: #1a1817; }
         .timer-control-btn i { transition: transform 0.2s; }
         .timer-control-btn:active i { transform: scale(0.9); }
-        .start-timer-btn { background-color: #22c55e !important; color: white !important; }
+        .start-timer-btn { background-color: transparent !important; }
         .sort-by-text { color: var(--coral); }
         .dark .sort-by-text { color: var(--coral); }
 
@@ -91,10 +91,6 @@
             pointer-events: none;
             transition: opacity 0.4s ease;
         }
-        .is-focused-header {
-            opacity: 1 !important;
-            pointer-events: auto !important;
-        }
 
 
     </style>
@@ -108,7 +104,7 @@
                 <div class="bg-black text-white w-8 h-8 flex items-center justify-center rounded-full flex-shrink-0">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
                 </div>
-                <div><h1 class="text-xl font-bold text-[var(--foreground)]">the work app</h1></div>
+                <div><h1 class="text-xl font-bold text-[var(--foreground)]">time</h1></div>
             </div>
             <nav id="desktop-nav" class="flex-grow flex flex-col space-y-2">
                 <button data-page="page-tracker" class="nav-btn flex items-center space-x-4 p-3 rounded-lg text-left font-semibold text-[var(--foreground)]">
@@ -144,7 +140,7 @@
                             <div class="bg-black text-white w-8 h-8 flex items-center justify-center rounded-full">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
                             </div>
-                            <div><h1 class="text-xl font-bold text-[var(--foreground)]">the work app</h1></div>
+                            <div><h1 class="text-xl font-bold text-[var(--foreground)]">time</h1></div>
                         </div>
                     </div>
                 </div>
@@ -167,10 +163,10 @@
                         <div id="sort-controls-container">
                             <div class="flex flex-wrap items-center justify-between my-4 p-2 rounded-lg gap-4" style="background-color: var(--coral-light);">
                                 <div class="flex items-center space-x-2">
-                                    <span class="text-sm font-semibold ml-2 sort-by-text">Sort by:</span>
+                                    <span class="text-sm font-semibold ml-2 sort-by-text">Sort:</span>
                                     <button data-sort="latest" class="sort-btn text-xs font-semibold px-3 py-1 rounded-full active">Recent</button>
                                     <button data-sort="name" class="sort-btn text-xs font-semibold px-3 py-1 rounded-full">Name</button>
-                                    <button data-sort="time" data-dir="desc" class="sort-btn text-xs font-semibold px-3 py-1 rounded-full inline-flex items-center gap-1">Timer Amount <span class="sort-arrow"></span></button>
+                                    <button data-sort="time" data-dir="desc" class="sort-btn text-xs font-semibold px-3 py-1 rounded-full inline-flex items-center gap-1">Time <span class="sort-arrow"></span></button>
                                 </div>
                                 <div class="text-sm text-right pr-2">
                                     <span class="font-medium text-[var(--foreground)]">Today:</span>
@@ -373,15 +369,16 @@
             </div>
             <button id="export-day-notes-btn" class="hidden bg-[var(--coral)] text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-md hover:bg-opacity-90">Export Day Notes</button>
         </div>
-         <div class="flex flex-wrap items-center gap-4">
-            <div class="p-2 bg-[var(--muted)] rounded-xl flex text-center text-sm font-semibold my-4">
+         <div class="flex flex-col md:flex-row md:items-center gap-4 my-4">
+            <div class="p-2 bg-[var(--muted)] rounded-xl flex text-center text-sm font-semibold">
                 <button data-filter="day" class="reports-filter-btn flex-1 py-2 px-4 rounded-lg">Day</button>
                 <button data-filter="week" class="reports-filter-btn flex-1 py-2 px-4 rounded-lg bg-[var(--card)] shadow">Week</button>
                 <button data-filter="month" class="reports-filter-btn flex-1 py-2 px-4 rounded-lg">Month</button>
                 <button data-filter="custom" class="reports-filter-btn flex-1 py-2 px-4 rounded-lg">Custom</button>
             </div>
-            <div id="reports-day-picker-container" class="hidden">
-                 <input type="date" id="reports-day-picker" class="w-full p-2 border rounded-md text-sm bg-[var(--input-bg)]">
+            <div id="reports-day-picker-container" class="hidden flex items-center gap-2">
+                 <label for="reports-day-picker" class="font-semibold text-sm">Day:</label>
+                 <input type="date" id="reports-day-picker" class="p-2 border rounded-md text-sm bg-[var(--input-bg)]">
             </div>
         </div>
         <div id="reports-custom-range" class="hidden flex items-center gap-2 text-sm mb-4">
@@ -505,7 +502,7 @@
             if (!card || isAnimating) return;
             isAnimating = true;
             document.body.classList.add('focus-mode-active');
-
+            
             const list = document.getElementById('dashboard-projects-list');
             const rect = card.getBoundingClientRect();
 
@@ -558,6 +555,7 @@
                 }
                 isAnimating = true;
                 document.body.classList.remove('focus-mode-active');
+
                 const { card, placeholder } = focusedCardState;
                 const list = document.getElementById('dashboard-projects-list');
 
@@ -597,7 +595,7 @@
             if (!card) return;
 
             const timerDisplay = card.querySelector('.timer-display');
-            const timerControlsContainer = card.querySelector('.flex.justify-end.h-10');
+            const timerControlsContainer = card.querySelector('.h-10');
 
             if (timerDisplay) {
                 timerDisplay.classList.toggle('text-yellow-500', activeTimer.isPaused);
@@ -705,7 +703,7 @@
                 
                 const expC=`<div class="expanded-content">
                     <div class="h-full">
-                        <div class="pt-4 flex flex-col h-full relative">
+                        <div class="pt-4 flex flex-col h-full relative px-4 pb-4">
                             <div class="relative mb-3 flex-shrink-0">
                                 <input type="text" placeholder="What are you working on?" class="task-description-input w-full p-2 rounded-md border border-[var(--input-border)] bg-[var(--input-bg)]" value="${isR ? activeTimer.description : ''}">
                                 <div class="custom-task-dropdown hidden"></div>
@@ -730,57 +728,46 @@
                         <button class="timer-control-btn stop-timer-btn bg-red-500 text-white w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-stop text-xl"></i></button>
                        </div>`
                     : `<div class="flex items-center">
-                        <button class="timer-control-btn start-timer-btn w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-play text-2xl"></i></button>
+                        <button class="timer-control-btn start-timer-btn"><i class="fa-regular fa-circle-play text-4xl text-[var(--coral)]"></i></button>
                        </div>`;
+                
+                const progressBarHTML = p.estimate > 0 ? `<div class="progress-bar-bg"><div class="progress-bar-fg" style="width:${Math.min(100,pgr)}%;background-color:${p.color};"></div></div>` : '';
 
-                const todaysLoggedTasks = tasks.filter(t => t.projectId === p.id && new Date(t.startTime).toDateString() === new Date().toDateString());
-                const projectPredefinedTasks = predefinedTasks.filter(t => t.projectId === p.id);
-                const hasTasks = todaysLoggedTasks.length > 0 || projectPredefinedTasks.length > 0;
-
-                let tasksTodayHTML = `<div class="mt-4 border-t border-[var(--border)] text-sm hidden lg:block ${hasTasks ? 'overflow-y-auto pt-2' : ''}" style="max-height: 6rem;">`;
-                if (hasTasks) {
-                    tasksTodayHTML += '<h3 class="font-semibold text-xs text-[var(--muted-foreground)] mb-1 sticky top-0 bg-[var(--card)]/80 backdrop-blur-sm z-[1]">Today\'s Activity</h3>';
-                    tasksTodayHTML += '<ul class="space-y-1">';
-                    todaysLoggedTasks.forEach(t => {
-                        tasksTodayHTML += `<li class="flex items-center gap-2 text-xs truncate" title="${t.description}"><i class="fa-solid fa-check text-green-500 w-4 text-center"></i><span class="flex-grow truncate">${t.description}</span><span class="font-mono text-[var(--muted-foreground)] flex-shrink-0">${formatDuration(t.endTime - t.startTime)}</span></li>`;
-                    });
-                    const loggedDescriptions = todaysLoggedTasks.map(t => t.description.trim().toLowerCase());
-                    projectPredefinedTasks.forEach(t => {
-                        if (!loggedDescriptions.includes(t.description.trim().toLowerCase())) {
-                            tasksTodayHTML += `<li class="flex items-center gap-2 text-xs truncate text-[var(--muted-foreground)]" title="${t.description}"><i class="fa-regular fa-circle text-xs w-4 text-center"></i><span class="flex-grow truncate">${t.description}</span></li>`;
-                        }
-                    });
-                    tasksTodayHTML += '</ul>';
-                } else {
-                    tasksTodayHTML += '<div class="flex items-center justify-center h-full"><p class="text-xs text-[var(--muted-foreground)]">No tasks for this project.</p></div>';
-                }
-                tasksTodayHTML += '</div>';
-
-                const progressBarHTML = p.estimate > 0 ? `<div class="progress-bar-bg mt-auto"><div class="progress-bar-fg" style="width:${Math.min(100,pgr)}%;background-color:${p.color};"></div></div>` : '';
-
-                return`<div class="project-card bg-[var(--card)] rounded-xl shadow-sm border border-[var(--border)] p-4 transition-all duration-300 relative flex flex-col justify-between ${isR?'is-running':''}" style="--project-color:${p.color};--project-color-glow:${p.color}40;" data-project-id="${p.id}">
-                    <div>
-                        <div class="flex justify-between items-start gap-2">
-                            <div class="flex items-start space-x-4 min-w-0">
-                                <span class="w-4 h-4 rounded-full flex-shrink-0 mt-1.5" style="background-color:${p.color};"></span>
+                let cardBody;
+                if(isR) {
+                     cardBody = `
+                        <div class="p-4 h-full flex flex-col">
+                            <div class="flex justify-between items-start gap-2">
                                 <div class="min-w-0 flex-grow">
-                                    <button class="font-semibold project-name-link truncate text-left hover:underline text-lg w-full" data-project-id="${p.id}">${p.name}</button>
-                                    <div class="text-sm font-medium text-gray-500 h-5">
-                                        ${isR ? `Total: ${formatDuration(totalTimeOverallMs)}` : ''}
-                                    </div>
+                                    <button class="font-semibold project-name-link truncate text-left hover:underline text-xl w-full" data-project-id="${p.id}">${p.name}</button>
+                                    <div class="text-sm font-medium text-gray-500 h-5">Total: ${formatDuration(totalTimeOverallMs)}</div>
+                                </div>
+                                <div class="text-right flex-shrink-0">
+                                    <div class="text-2xl font-bold mb-2 text-green-500 live-timer-display">${liveDisplayTime}</div>
+                                    <div class="flex justify-end h-10">${timerControls}</div>
                                 </div>
                             </div>
-                            <div class="flex items-center space-x-2 lg:flex-col lg:items-end lg:space-x-0 flex-shrink-0">
-                                <div class="text-2xl font-bold lg:mb-2 ${isR && !activeTimer.isPaused ? 'text-green-500 live-timer-display' : (isR && activeTimer.isPaused ? 'text-yellow-500' : 'text-gray-400')} timer-display">${isR ? liveDisplayTime : formatDuration(timeTodayMs)}</div>
-                                <div class="flex justify-end h-10">${timerControls}</div>
+                            ${expC}
+                        </div>`;
+                } else {
+                     cardBody = `
+                        <div class="p-4">
+                            <div class="flex items-center w-full">
+                                <div class="flex-grow min-w-0 mr-4">
+                                    <button class="font-semibold project-name-link text-2xl text-left hover:underline truncate" data-project-id="${p.id}">${p.name}</button>
+                                </div>
+                                <div class="flex items-center space-x-4 flex-shrink-0">
+                                    <div class="text-xl font-bold timer-display">${formatDuration(timeTodayMs)}</div>
+                                    <div class="flex items-center">${timerControls}</div>
+                                </div>
                             </div>
+                            ${p.estimate > 0 ? `<div class="mt-4">${progressBarHTML}</div>` : ''}
                         </div>
-                        ${expC}
-                    </div>
-                    <div class="flex-grow flex flex-col justify-end mt-2">
-                        ${tasksTodayHTML}
-                        ${progressBarHTML}
-                    </div>
+                    `;
+                }
+
+                return`<div class="project-card bg-[var(--card)] rounded-xl shadow-sm border-l-8 overflow-hidden ${isR?'is-running':'border-transparent'}" style="border-left-color: ${p.color}; --project-color:${p.color};" data-project-id="${p.id}">
+                    ${cardBody}
                 </div>`;
             }).join('');
         };
@@ -823,7 +810,7 @@
             }
 
             const groupedByProject=fTs.reduce((acc,task)=>{(acc[task.projectId]=acc[task.projectId]||[]).push(task);return acc;},{});
-            const summaryEl=document.getElementById('reports-summary');if(!summaryEl)return;summaryEl.innerHTML=projects.filter(p=>groupedByProject[p.id]).map(p=>{const projectTasks=groupedByProject[p.id];const totalTime=projectTasks.reduce((sum,t)=>sum+(t.endTime-t.startTime),0);return`<details class="bg-[var(--card)] p-3 rounded-lg border"><summary class="font-semibold flex justify-between items-center cursor-pointer"><span>${p.name}</span><span style="color:${p.color};">${formatDuration(totalTime)}</span></summary><div class="mt-3 pt-3 border-t space-y-2">${projectTasks.sort((a,b)=>b.startTime-a.startTime).map(t=>`<div class="text-sm flex justify-between"><span>${t.description}</span><span class="text-[var(--muted-foreground)]">${formatDuration(t.endTime-t.startTime)}</span></div>`).join('')}</div></details>`;}).join('')||'<p class="text-center text-[var(--muted-foreground)] py-8 col-span-full">No time tracked in this period.</p>';
+            const summaryEl=document.getElementById('reports-summary');if(!summaryEl)return;summaryEl.innerHTML=projects.filter(p=>groupedByProject[p.id]).map(p=>{const projectTasks=groupedByProject[p.id];const totalTime=projectTasks.reduce((sum,t)=>sum+(t.endTime-t.startTime),0);return`<details class="bg-[var(--card)] p-3 rounded-lg border"><summary class="font-semibold flex justify-between items-center cursor-pointer"><span><span class="inline-block w-3 h-3 rounded-full mr-2" style="background-color:${p.color};"></span>${p.name}</span><span>${formatDuration(totalTime)}</span></summary><div class="mt-3 pt-3 border-t space-y-2">${projectTasks.sort((a,b)=>b.startTime-a.startTime).map(t=>`<div class="text-sm flex justify-between"><span>${t.description}</span><span class="text-[var(--muted-foreground)]">${formatDuration(t.endTime-t.startTime)}</span></div>`).join('')}</div></details>`;}).join('')||'<p class="text-center text-[var(--muted-foreground)] py-8 col-span-full">No time tracked in this period.</p>';
         };
         
         const exportDayNotesAsMarkdown = () => {
@@ -887,7 +874,7 @@
         const renderCompletedProjectsPage=()=>{const completedProjects=projects.filter(p=>p.status==='completed');const contentEl=document.getElementById('completed-projects-content');contentEl.innerHTML=`<div class="flex items-center justify-between mb-6"><h1 class="text-2xl font-bold">Completed Projects</h1><button class="back-to-dashboard-btn font-semibold text-blue-600 hover:underline">Back to Dashboard</button></div><div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">${completedProjects.length>0?completedProjects.map(p=>`<div class="bg-[var(--card)] p-3 rounded-lg border flex items-center justify-between"><div class="flex items-center space-x-3"><span class="w-3 h-3 rounded-full" style="background-color:${p.color};"></span><button class="font-semibold completed-project-link hover:underline" data-project-id="${p.id}">${p.name}</button></div></div>`).join(''):'<p class="text-center text-[var(--muted-foreground)] py-8 col-span-full">No completed projects.</p>'}</div>`;};
         const openProjectDetailView=(id)=>{navigateTo('page-detail');currentDetailProjectId=id;const p=projects.find(p=>p.id===id);if(!p)return;const projectTasks=predefinedTasks.filter(t=>t.projectId===id);const tasksHTML=`<div class="mt-6"><h2 class="font-semibold mb-2">Task List</h2><div class="space-y-2">${projectTasks.length>0?projectTasks.map(t=>`<div class="bg-[var(--card)] p-2 rounded-lg border text-sm">${t.description}</div>`).join(''):'<p class="text-sm text-[var(--muted-foreground)]">No tasks defined for this project yet.</p>'}</div></div>`;const statusRadios=`<div class="flex items-center gap-6 mt-4"><p class="text-sm font-medium text-[var(--muted-foreground)]">Project Status:</p><div class="flex items-center gap-4"><label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="project-status" value="open" class="project-status-radio" ${p.status!=='completed'?'checked':''}> Open</label><label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="project-status" value="completed" class="project-status-radio" ${p.status==='completed'?'checked':''}> Completed</label></div></div>`;document.getElementById('detail-view-content').innerHTML=`<div id="project-detail-view-mode"><header class="flex items-start justify-between mb-2"><div><h1 class="text-2xl font-bold" style="color:${p.color};">${p.name}</h1></div><div class="flex items-center gap-2"><button id="edit-project-btn" class="p-2 rounded-md hover:bg-[var(--muted)]"><i class="fa-solid fa-pencil text-xl"></i></button></div></header><p class="text-sm text-[var(--muted-foreground)] mb-4">${p.description||'No description.'}</p><button id="add-manual-entry-btn" class="w-full text-center py-2 px-4 rounded-lg font-semibold border border-[var(--input-border)] hover:bg-[var(--muted)]">Add Time</button>${statusRadios}</div><div id="project-detail-edit-mode" class="hidden mt-6 mb-6 space-y-3 p-4 bg-[var(--muted)] rounded-lg"><div class="flex gap-4"><input type="text" id="edit-project-name" class="w-full p-2 text-xl font-bold border rounded-md bg-[var(--input-bg)]" value="${p.name}"><div id="edit-color-palette" class="flex flex-wrap gap-2"></div><input type="hidden" id="edit-project-color" value="${p.color}"></div><textarea id="edit-project-description" rows="2" class="w-full p-2 text-sm border rounded-md bg-[var(--input-bg)]">${p.description||''}</textarea><div class="grid grid-cols-2 gap-4"><input type="number" id="edit-project-estimate" placeholder="Estimate (hrs)" value="${p.estimate||''}" class="w-full p-2 border rounded-md text-sm bg-[var(--input-bg)]"></div><div class="flex justify-end gap-2"><button id="cancel-edit-project-btn" class="font-semibold px-5 py-2 text-base rounded-lg hover:bg-gray-300">Cancel</button><button id="save-updated-project-btn" class="font-semibold px-5 py-2 text-base rounded-lg bg-[var(--primary)] text-[var(--primary-foreground)]">Save</button></div></div><div class="mb-6 p-4 bg-[var(--card)] rounded-xl border mt-6"><p class="text-sm text-[var(--muted-foreground)]">Total Time for Period</p><p id="detail-total-time" class="text-3xl font-bold">0h 0m</p></div><div id="detail-date-filters" class="p-2 bg-[var(--muted)] rounded-xl flex text-center text-sm font-semibold my-4"><button data-filter="today" class="detail-filter-btn flex-1 py-2 rounded-lg bg-[var(--card)] shadow">Today</button><button data-filter="week" class="detail-filter-btn flex-1 py-2 rounded-lg">Week</button><button data-filter="month" class="detail-filter-btn flex-1 py-2 rounded-lg">Month</button><button data-filter="custom" class="detail-filter-btn flex-1 py-2 rounded-lg">Custom</button></div><div id="detail-custom-range" class="hidden flex items-center gap-2 text-sm mb-4"><input type="date" id="detail-date-start" class="w-full p-2 border rounded-md text-sm bg-[var(--input-bg)]"><span class="text-[var(--muted-foreground)]">to</span><input type="date" id="detail-date-end" class="w-full p-2 border rounded-md text-sm bg-[var(--input-bg)]"></div><div id="detail-entries-list" class="space-y-3"></div>${tasksHTML}`;renderProjectEntries(id,'today');};
         const renderProjectEntries=(id,filter,range={})=>{let sD,eD;const n=new Date();if(filter==='today'){sD=new Date().setHours(0,0,0,0);eD=new Date().setHours(23,59,59,999);}else if(filter==='week'){const d=n.getDay()===0?6:n.getDay()-1,f=n.getDate()-d;sD=new Date(new Date(n).setDate(f)).setHours(0,0,0,0);eD=new Date(new Date(n).setDate(f+6)).setHours(23,59,59,999);}else if(filter==='month'){sD=new Date(n.getFullYear(),n.getMonth(),1);eD=new Date(n.getFullYear(),n.getMonth()+1,0).setHours(23,59,59,999);}else if(filter==='range'&&range.start&&range.end){sD=new Date(range.start).getTime();eD=new Date(range.end).setHours(23,59,59,999);}const fTs=tasks.filter(t=>t.projectId===id&&t.startTime>=sD&&t.startTime<=eD).sort((a,b)=>b.startTime-a.startTime);const tMs=fTs.reduce((s,t)=>s+(t.endTime-t.startTime),0);const tEl=document.getElementById('detail-total-time');if(tEl)tEl.textContent=formatDuration(tMs);const lEl=document.getElementById('detail-entries-list');if(lEl)lEl.innerHTML=fTs.length>0?fTs.map(t=>createTaskEntryHTML(t,projects.find(p=>p.id===t.projectId))).join(''):`<p class="text-center p-4">No entries.</p>`;};
-        const createTaskEntryHTML=(t,p)=>{const sT=new Date(t.startTime),eT=new Date(t.endTime);const dur=formatDuration(t.endTime-t.startTime);const dStr=sT.toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'});const tStr=`${sT.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})} - ${eT.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`;return`<div class="task-entry bg-[var(--card)] p-3 rounded-lg border" data-task-id="${t.id}"><div class="view-mode"><div class="flex justify-between items-start"><div class="flex-grow"><p class="font-semibold">${t.description}</p><p class="text-sm text-[var(--muted-foreground)] whitespace-pre-wrap">${t.notes||'No notes'}</p><div class="text-sm text-[var(--muted-foreground)] mt-2">${dStr} &bull; ${tStr}</div></div><div class="flex items-center gap-1 ml-2 flex-shrink-0"><span class="font-semibold text-base mr-2">${dur}</span><button class="edit-task-btn p-2 rounded-md hover:bg-[var(--muted)]"><i class="fa-solid fa-pencil"></i></button><button class="delete-task-btn p-2 rounded-md hover:bg-[var(--muted)]"><i class="fa-solid fa-trash-can"></i></button></div></div></div><div class="edit-mode hidden space-y-2 mt-2"><input class="w-full p-2 text-sm border rounded-md bg-[var(--input-bg)] edit-task-description" value="${t.description}"><textarea class="w-full p-2 text-sm border rounded-md h-20 bg-[var(--input-bg)] edit-task-notes">${t.notes||''}</textarea><input type="text" placeholder="Add tags..." class="w-full p-2 text-sm border rounded-md bg-[var(--input-bg)]" value="${(t.tags||[]).join(' ')}"><div class="flex items-center gap-2"><input type="date" class="w-full p-1 text-xs border rounded-md bg-[var(--input-bg)]" value="${sT.toISOString().split('T')[0]}"><input type="time" class="w-full p-1 text-xs border" value="${sT.toTimeString().slice(0,5)}"><input type="time" class="w-full p-1 text-xs border" value="${eT.toTimeString().slice(0,5)}"></div><div class="flex justify-end gap-2"><button class="cancel-edit-btn px-4 py-2 text-sm rounded-md">Cancel</button><button class="save-task-btn px-4 py-2 text-sm text-white bg-blue-600 rounded-md">Save</button></div></div></div>`;};
+        const createTaskEntryHTML=(t,p)=>{const sT=new Date(t.startTime),eT=new Date(t.endTime);const dur=formatDuration(t.endTime-t.startTime);const dStr=sT.toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'});const tStr=`${sT.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})} - ${eT.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`;return`<div class="task-entry bg-[var(--card)] p-3 rounded-lg border" data-task-id="${t.id}"><div class="view-mode"><div class="flex justify-between items-start"><div class="flex-grow"><p class="font-semibold">${t.description}</p><p class="text-sm text-[var(--muted-foreground)] whitespace-pre-wrap">${t.notes||'No notes'}</p><div class="text-sm text-[var(--muted-foreground)] mt-2">${dStr} &bull; ${tStr}</div></div><div class="flex items-start pt-1 gap-1 ml-2 flex-shrink-0"><span class="font-semibold text-base mr-2">${dur}</span><button class="edit-task-btn p-2 rounded-md hover:bg-[var(--muted)]"><i class="fa-solid fa-pencil"></i></button><button class="delete-task-btn p-2 rounded-md hover:bg-[var(--muted)]"><i class="fa-solid fa-trash-can"></i></button></div></div></div><div class="edit-mode hidden space-y-2 mt-2"><input class="w-full p-2 text-sm border rounded-md bg-[var(--input-bg)] edit-task-description" value="${t.description}"><textarea class="w-full p-2 text-sm border rounded-md h-20 bg-[var(--input-bg)] edit-task-notes">${t.notes||''}</textarea><input type="text" placeholder="Add tags..." class="w-full p-2 text-sm border rounded-md bg-[var(--input-bg)]" value="${(t.tags||[]).join(' ')}"><div class="flex items-center gap-2"><input type="date" class="w-full p-1 text-xs border rounded-md bg-[var(--input-bg)]" value="${sT.toISOString().split('T')[0]}"><input type="time" class="w-full p-1 text-xs border" value="${sT.toTimeString().slice(0,5)}"><input type="time" class="w-full p-1 text-xs border" value="${eT.toTimeString().slice(0,5)}"></div><div class="flex justify-end gap-2"><button class="cancel-edit-btn px-4 py-2 text-sm rounded-md">Cancel</button><button class="save-task-btn px-4 py-2 text-sm text-white bg-blue-600 rounded-md">Save</button></div></div></div>`;};
         const saveManualEntry=async e=>{e.preventDefault();const desc=document.getElementById('manual-entry-desc').value,date=document.getElementById('manual-entry-date').value,start=document.getElementById('manual-entry-start').value,end=document.getElementById('manual-entry-end').value,notes=document.getElementById('manual-entry-notes').value;if(!desc||!date||!start||!end)return;const startTime=new Date(`${date}T${start}`).getTime(),endTime=new Date(`${date}T${end}`).getTime();if(startTime>=endTime)return;const newTask={projectId:currentDetailProjectId,description:desc,notes,startTime,endTime,tags:[]};const newId=await addData('tasks',newTask);newTask.id=newId;tasks.push(newTask);closeModal(document.getElementById('manual-entry-modal'));const cF=document.querySelector('#detail-date-filters .detail-filter-btn.active').dataset.filter;renderProjectEntries(currentDetailProjectId,cF);updateDashboardTotalTime();renderDashboardProjects();};
         const showUserGuide=()=>{document.getElementById('guide-content').innerHTML=`<h2 class="text-2xl font-bold mb-4">Welcome to the work app!</h2><div class="prose dark:prose-invert max-w-none space-y-4 text-[var(--foreground)]"><p>This guide explains the features to help you track time effectively.</p><h3 class="font-semibold">1. Creating a Project</h3><p>Use the '+' button on the main screen to create a new project. You can add a name, description, color, and an optional time estimate.</p><h3 class="font-semibold">2. Tasks</h3><p>Go to the Tasks page (clipboard icon) to create reusable tasks for your projects. This saves you from typing the same task name repeatedly.</p><h3 class="font-semibold">3. Tracking Time</h3><ul><li>Click the play button on a project card to start the timer.</li><li>You can select a task or type a new one.</li><li>Use the pause button to take a break without creating a new time entry.</li><li>Click the stop button to end and save the time entry.</li></ul><h3 class="font-semibold">4. PWA & Automatic Backups</h3><ul><li><strong>Installable App (PWA):</strong> Your browser may show an option to "Install" or "Add to Home Screen" to use this app like a native app.</li><li><strong>Automatic Backups:</strong> In <strong>Settings</strong>, enable "Automatic Daily Backups" to save a JSON backup to your downloads folder every day after 12:00 PM.</li></ul></div>`;openModal(document.getElementById('guide-modal'));};
         
@@ -916,7 +903,7 @@
             const entryEl=e.target.closest('.task-entry');if(entryEl){const tId=parseInt(entryEl.dataset.taskId);if(e.target.closest('.delete-task-btn')){if(confirm('Delete entry?')){await deleteData('tasks',tId);tasks=tasks.filter(t=>t.id!==tId);renderProjectEntries(currentDetailProjectId,document.querySelector('#detail-date-filters .detail-filter-btn.active').dataset.filter);updateDashboardTotalTime();renderDashboardProjects();}}
             else if(e.target.closest('.edit-task-btn')){entryEl.querySelector('.view-mode').classList.add('hidden');entryEl.querySelector('.edit-mode').classList.remove('hidden');const notesInput=entryEl.querySelector('.edit-task-notes');if(notesInput){notesInput.dispatchEvent(new Event('input',{bubbles:true}));}}
             else if(e.target.closest('.cancel-edit-btn')){entryEl.querySelector('.view-mode').classList.remove('hidden');entryEl.querySelector('.edit-mode').classList.add('hidden');}
-            else if(e.target.closest('.save-task-btn')){const t=tasks.find(t=>t.id===tId);if(!t)return;const i=entryEl.querySelectorAll('.edit-mode input, .edit-mode textarea');t.description=i[0].value;t.notes=i[1].value;t.tags=i[2].value.trim().split(/[\s,]+/).filter(Boolean);const nD=i[3].value;t.startTime=new Date(`${nD}T${i[4].value}`).getTime();t.endTime=new Date(`${nD}T${i[5].value}`).getTime();await updateData('tasks',t);renderProjectEntries(currentDetailProjectId,document.querySelector('#detail-date-filters .detail-filter-btn.active').dataset.filter);updateDashboardTotalTime();renderDashboardProjects();}}}
+            else if(e.target.closest('.save-task-btn')){const t=tasks.find(t=>t.id===tId);if(!t)return;const i=entryEl.querySelectorAll('.edit-mode input, .edit-mode textarea');t.description=i[0].value;t.notes=i[1].value;t.tags=i[2].value.trim().split(/[\s,]+/).filter(Boolean);const nD=i[3].value;t.startTime=new Date(`${nD}T${i[4].value}`).getTime();t.endTime=new Date(`${nD}T${i[5].value}`).getTime();await updateData('tasks',t);entryEl.querySelector('.view-mode').classList.remove('hidden');entryEl.querySelector('.edit-mode').classList.add('hidden');renderProjectEntries(currentDetailProjectId,document.querySelector('#detail-date-filters .detail-filter-btn.active').dataset.filter);updateDashboardTotalTime();renderDashboardProjects();}}}
             const completedProjectsView=e.target.closest('#page-completed-projects');if(completedProjectsView){if(e.target.closest('.back-to-dashboard-btn'))navigateTo('page-tracker');if(e.target.closest('.completed-project-link')){const pId=parseInt(e.target.closest('.completed-project-link').dataset.projectId);openProjectDetailView(pId);}}});
         
         document.getElementById('add-project-form').addEventListener('submit',saveNewProject);
@@ -954,7 +941,7 @@
     1. Create a file named: manifest.json
     --------------------------------------
     {
-      "name": "the work app", "short_name": "WorkApp", "description": "A client-side time tracking application.",
+      "name": "time", "short_name": "Time", "description": "A client-side time tracking application.",
       "start_url": "./[YOUR_HTML_FILE_NAME].html", "display": "standalone", "background_color": "#ffffff", "theme_color": "#030213",
       "icons": [ { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" }, { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" } ]
     }
